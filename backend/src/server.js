@@ -182,6 +182,71 @@ app.get("/api/quotes/:quoteNumber", (req, res) => {
   res.status(status).json(result);
 });
 
+function clearHistoryHandler(req, res) {
+  try {
+    const scope = String(req.query.scope || "all").trim().toLowerCase();
+    const validScopes = new Set(["all", "products", "services", "quotes"]);
+    if (!validScopes.has(scope)) {
+      return res.status(400).json({ ok: false, error: "scope invalido. Usa: all, products, services, quotes" });
+    }
+
+    const cleared = {
+      products_logs: 0,
+      services_logs: 0,
+      quotes_files: 0
+    };
+
+    const clearProducts = scope === "all" || scope === "products";
+    const clearServices = scope === "all" || scope === "services";
+    const clearQuotes = scope === "all" || scope === "quotes";
+
+    if (clearProducts) {
+      const logsPath = appConfig.files.productChangeLogs;
+      const logs = appConfig.fs.existsSync(logsPath) ? JSON.parse(appConfig.fs.readFileSync(logsPath, "utf8") || "[]") : [];
+      cleared.products_logs = Array.isArray(logs) ? logs.length : 0;
+      appConfig.fs.writeFileSync(logsPath, "[]");
+    }
+
+    if (clearServices) {
+      const logsPath = appConfig.files.serviceChangeLogs;
+      const logs = appConfig.fs.existsSync(logsPath) ? JSON.parse(appConfig.fs.readFileSync(logsPath, "utf8") || "[]") : [];
+      cleared.services_logs = Array.isArray(logs) ? logs.length : 0;
+      appConfig.fs.writeFileSync(logsPath, "[]");
+    }
+
+    if (clearQuotes) {
+      const quotesRoot = appConfig.files.quotesRoot;
+      if (appConfig.fs.existsSync(quotesRoot)) {
+        const folders = appConfig.fs.readdirSync(quotesRoot, { withFileTypes: true }).filter((d) => d.isDirectory());
+        for (const folder of folders) {
+          const dir = path.join(quotesRoot, folder.name);
+          const files = appConfig.fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".json"));
+          for (const file of files) {
+            appConfig.fs.unlinkSync(path.join(dir, file));
+            cleared.quotes_files += 1;
+          }
+          const leftovers = appConfig.fs.readdirSync(dir);
+          if (leftovers.length === 0) {
+            appConfig.fs.rmdirSync(dir);
+          }
+        }
+      }
+    }
+
+    return res.json({
+      ok: true,
+      scope,
+      message: "Historial eliminado correctamente",
+      cleared
+    });
+  } catch (error) {
+    return res.status(500).json({ ok: false, error: error?.message || "Error eliminando historial" });
+  }
+}
+
+app.delete("/api/history", clearHistoryHandler);
+app.post("/api/history/clear", clearHistoryHandler);
+
 app.post("/api/quotes/:quoteNumber/export-pdf", async (req, res) => {
   try {
     const { quoteNumber } = req.params;

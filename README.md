@@ -28,3 +28,14 @@ Implementacion orientada a produccion basica sin base de datos, usando Excel com
 - docs/phase-deliverables/FASE_2_GUIA_PRUEBA.md
 - docs/phase-deliverables/FASE_3_GUIA_PRUEBA.md
 - docs/phase-deliverables/FASE_4_GUIA_PRUEBA.md
+
+## Estructura recomendada
+- `backend/`: API y logica de negocio activa (`src/server.js`).
+- `frontend/`: interfaz web activa (`index.html`, `app.js`, `styles/`).
+- `data/`: archivos operativos (productos, servicios, cotizaciones, logs).
+- `config/`: reglas de negocio y configuraciones globales.
+- `docs/`: documentacion funcional y tecnica.
+- `workspace/`: area de trabajo auxiliar no productiva:
+- `workspace/docx-lab/`: inspecciones y pruebas de DOCX.
+- `workspace/test-assets/`: archivos de prueba.
+- `workspace/backups/`: respaldos `.bak` de plantilla.

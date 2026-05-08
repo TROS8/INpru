@@ -85,6 +85,7 @@ const el = {
   quoteFilterQuery: document.getElementById("quoteFilterQuery"),
   quoteFilterDate: document.getElementById("quoteFilterDate"),
   quoteHistoryBody: document.getElementById("quoteHistoryBody"),
+  historyClearResult: document.getElementById("historyClearResult"),
   docResult: document.getElementById("docResult"),
   templateFileInput: document.getElementById("templateFileInput")
 };
@@ -109,6 +110,10 @@ document.getElementById("btnAddQuoteProductType").addEventListener("click", addQ
 document.getElementById("btnGenerateDocs").addEventListener("click", generateDocuments);
 document.getElementById("btnDownloadTemplate").addEventListener("click", downloadTemplate);
 document.getElementById("btnUploadTemplate").addEventListener("click", uploadTemplate);
+document.getElementById("btnClearAllHistory").addEventListener("click", clearAllHistory);
+document.getElementById("btnBackToTop").addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 el.customerNit.addEventListener("blur", lookupCustomerByNit);
 el.productSelect.addEventListener("change", syncSelectedProductPrice);
 el.quoteServiceSelect.addEventListener("change", syncSelectedQuoteServicePrice);
@@ -122,6 +127,8 @@ el.serviceHistoryFilterAction.addEventListener("change", refreshServiceHistory);
 boot();
 
 async function boot() {
+  setupAccordionUX();
+  setupBackToTopUX();
   await refreshColumns();
   await refreshCatalogs();
   await refreshProductsAdmin();
@@ -136,6 +143,28 @@ async function boot() {
   renderQuoteProductTypeSelect();
   renderQuoteProductTypes();
   await refreshQuoteHistory();
+}
+
+function setupAccordionUX() {
+  const accordions = Array.from(document.querySelectorAll(".accordion"));
+  accordions.forEach((item) => {
+    item.addEventListener("toggle", () => {
+      if (!item.open) return;
+      accordions.forEach((other) => {
+        if (other !== item) other.open = false;
+      });
+    });
+  });
+}
+
+function setupBackToTopUX() {
+  const button = document.getElementById("btnBackToTop");
+  const update = () => {
+    if (window.scrollY > 380) button.classList.add("show");
+    else button.classList.remove("show");
+  };
+  window.addEventListener("scroll", update, { passive: true });
+  update();
 }
 
 async function refreshColumns() {
@@ -851,6 +880,33 @@ async function downloadTemplate() {
   }
 }
 
+async function clearAllHistory() {
+  const ok = confirm(
+    "Se eliminara el historial de productos, servicios y cotizaciones emitidas. Esta accion no se puede deshacer. Continuar?"
+  );
+  if (!ok) return;
+
+  try {
+    let response = await fetch(`${API}/api/history?scope=all`, { method: "DELETE" });
+    if (response.status === 404 || response.status === 405) {
+      response = await fetch(`${API}/api/history/clear?scope=all`, { method: "POST" });
+    }
+    const data = await handleJsonResponse(response);
+    showStatus(
+      el.historyClearResult,
+      `Historial eliminado. Registros: productos ${data.cleared.products_logs}, servicios ${data.cleared.services_logs}, cotizaciones ${data.cleared.quotes_files}.`,
+      "ok"
+    );
+    await refreshHistory();
+    await refreshServiceHistory();
+    await refreshQuoteHistory();
+    el.quotePreview.innerHTML = `<p class="muted">No hay cotizaciones en historial. Emite una nueva para previsualizar.</p>`;
+    state.lastQuoteNumber = "";
+  } catch (error) {
+    showStatus(el.historyClearResult, error.message, "error");
+  }
+}
+
 async function uploadTemplate() {
   try {
     const file = el.templateFileInput.files?.[0];
@@ -1003,7 +1059,10 @@ async function refreshQuoteHistory() {
 async function handleJsonResponse(response) {
   const raw = await response.text();
   let data;
-  try { data = JSON.parse(raw); } catch { throw new Error(`Respuesta no JSON (${response.status})`); }
+  try { data = JSON.parse(raw); } catch {
+    const sample = String(raw || "").replace(/\s+/g, " ").slice(0, 120);
+    throw new Error(`Respuesta no JSON (${response.status}). ${sample || "Sin contenido"}`);
+  }
   if (!response.ok) throw new Error(data?.errors?.join("; ") || data?.error || "Error de API");
   return data;
 }
