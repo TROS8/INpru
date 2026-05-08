@@ -40,5 +40,11 @@
     "label": "ACTIVO",
     "required": true,
     "fixed": true
+  },
+  {
+    "key": "re",
+    "label": "er",
+    "required": false,
+    "fixed": false
   }
 ]
