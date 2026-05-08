@@ -1,0 +1,3 @@
+﻿payment_code,payment_name,account_number,account_type,bank_name,owner_name,owner_id,instructions,active,updated_at
+TRF01,Transferencia Bancaria,1234567890,Ahorros,Banco Ejemplo,Empresa Ejemplo SAS,900123456,Enviar comprobante al correo de ventas,true,2026-05-06
+CASH01,Efectivo,,,N/A,Empresa Ejemplo SAS,900123456,Pago contra entrega segun acuerdo,true,2026-05-06

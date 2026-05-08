@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w16cex="http://schemas.microsoft.com/office/word/2018/wordml/cex" xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid" xmlns:w16="http://schemas.microsoft.com/office/word/2018/wordml" xmlns:w16du="http://schemas.microsoft.com/office/word/2023/wordml/word16du" xmlns:w16sdtdh="http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash" xmlns:w16sdtfl="http://schemas.microsoft.com/office/word/2024/wordml/sdtformatlock" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk" xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh w16sdtfl w16du wp14">
+  <w:body>
+    <w:p><w:pPr><w:pStyle w:val="Title"/></w:pPr><w:r><w:t>PLANTILLA OFICIAL SCMG SAS</w:t></w:r></w:p>
+    <w:p><w:r><w:t>Documento base institucional para comunicaciones, cotizaciones e informes.</w:t></w:r></w:p>
+
+    <w:tbl>
+      <w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:top w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:left w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:bottom w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:right w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:insideH w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/><w:insideV w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/></w:tblBorders></w:tblPr>
+      <w:tr>
+        <w:tc><w:p><w:r><w:t>Código</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>SCMG-PRT-EDIFICA-000000-R0</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>Versión</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>R0</w:t></w:r></w:p></w:tc>
+      </w:tr>
+      <w:tr>
+        <w:tc><w:p><w:r><w:t>Fecha</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>[dd/mm/aaaa]</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>Área</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>[Gerencia/Ingeniería/Comercial]</w:t></w:r></w:p></w:tc>
+      </w:tr>
+    </w:tbl>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>1. Objetivo</w:t></w:r></w:p>
+    <w:p><w:r><w:t>[Describa el propósito del documento.]</w:t></w:r></w:p>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>2. Alcance</w:t></w:r></w:p>
+    <w:p><w:r><w:t>[Defina el alcance y límites.]</w:t></w:r></w:p>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>3. Desarrollo / Detalle Técnico</w:t></w:r></w:p>
+    <w:p><w:pPr><w:pStyle w:val="Heading2"/></w:pPr><w:r><w:t>3.1 Descripción General</w:t></w:r></w:p>
+    <w:p><w:r><w:t>[Contenido técnico.]</w:t></w:r></w:p>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading2"/></w:pPr><w:r><w:t>3.2 Tabla de Ítems</w:t></w:r></w:p>
+    <w:tbl>
+      <w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:top w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:left w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:bottom w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:right w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:insideH w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/><w:insideV w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/></w:tblBorders></w:tblPr>
+      <w:tr>
+        <w:tc><w:p><w:r><w:t>Ítem</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>Descripción</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>Cantidad</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>V. Unitario</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>V. Total</w:t></w:r></w:p></w:tc>
+      </w:tr>
+      <w:tr>
+        <w:tc><w:p><w:r><w:t>1</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>[Descripción]</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t>1</w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t></w:t></w:r></w:p></w:tc>
+        <w:tc><w:p><w:r><w:t></w:t></w:r></w:p></w:tc>
+      </w:tr>
+    </w:tbl>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>4. Condiciones Comerciales</w:t></w:r></w:p>
+    <w:p><w:r><w:t>[Plazos, validez de oferta, forma de pago, garantías.]</w:t></w:r></w:p>
+
+    <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>5. Aprobaciones y Firmas</w:t></w:r></w:p>
+    <w:tbl>
+      <w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders><w:top w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:left w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:bottom w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:right w:val="single" w:sz="8" w:space="0" w:color="0B3B5D"/><w:insideH w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/><w:insideV w:val="single" w:sz="6" w:space="0" w:color="A6A6A6"/></w:tblBorders></w:tblPr>
+      <w:tr><w:tc><w:p><w:r><w:t>Elaboró</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Revisó</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Aprobó</w:t></w:r></w:p></w:tc></w:tr>
+      <w:tr><w:tc><w:p><w:r><w:t>[Nombre y cargo]</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>[Nombre y cargo]</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>[Nombre y cargo]</w:t></w:r></w:p></w:tc></w:tr>
+    </w:tbl>
+
+    <w:sectPr w:rsidR="003A0948" w:rsidRPr="004F26CD"><w:headerReference w:type="default" r:id="rId19"/><w:footerReference w:type="default" r:id="rId20"/><w:pgSz w:w="12240" w:h="15840" w:code="32718"/><w:pgMar w:top="1440" w:right="1080" w:bottom="1440" w:left="1080" w:header="709" w:footer="709" w:gutter="0"/><w:cols w:space="708"/><w:docGrid w:linePitch="360"/></w:sectPr>
+  </w:body>
+</w:document>

@@ -1,0 +1,22 @@
+﻿{
+  "business": {
+    "companyName": "Pendiente Definir",
+    "timezone": "America/Bogota",
+    "currency": "COP"
+  },
+  "quotation": {
+    "validityPolicy": "same_day_only",
+    "validityMessage": "Cotizacion valida unicamente para el dia de emision. Si el pago se realiza en una fecha posterior, la empresa podra actualizar precios y condiciones conforme a la lista vigente.",
+    "expiresAtLocalTime": "23:59:59",
+    "deliveryBusinessDays": 7,
+    "excludeWeekends": true,
+    "excludeHolidays": false
+  },
+  "files": {
+    "productsCurrent": "data/products/current_products.json",
+    "paymentMethodsCurrent": "data/payments/current_payment_methods.json",
+    "quotesRoot": "data/quotes",
+    "counter": "data/system/counter.json",
+    "importLogs": "data/system/import_logs.json"
+  }
+}

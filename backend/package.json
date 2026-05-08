@@ -1,0 +1,15 @@
+﻿{
+  "name": "cotizaciones-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "docxtemplater": "^3.47.4",
+    "express": "^4.19.2",
+    "pizzip": "^3.1.7"
+  }
+}

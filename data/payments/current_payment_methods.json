@@ -1,0 +1,50 @@
+[
+  {
+    "payment_code": "TRF01",
+    "payment_name": "Transferencia Bancolombia",
+    "account_number": "01928374655",
+    "account_type": "Ahorros",
+    "bank_name": "Bancolombia",
+    "owner_name": "Energia y Soluciones SAS",
+    "owner_id": "901456321",
+    "instructions": "Enviar soporte al correo pagos@empresa.com",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "payment_code": "TRF02",
+    "payment_name": "Transferencia Davivienda",
+    "account_number": "8899123412",
+    "account_type": "Corriente",
+    "bank_name": "Davivienda",
+    "owner_name": "Energia y Soluciones SAS",
+    "owner_id": "901456321",
+    "instructions": "Incluir numero de cotizacion en referencia",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "payment_code": "QR01",
+    "payment_name": "Pago QR",
+    "account_number": "",
+    "account_type": "",
+    "bank_name": "Nequi",
+    "owner_name": "Energia y Soluciones SAS",
+    "owner_id": "901456321",
+    "instructions": "Solicitar QR actualizado al asesor",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "payment_code": "CASH01",
+    "payment_name": "Efectivo",
+    "account_number": "",
+    "account_type": "",
+    "bank_name": "N/A",
+    "owner_name": "Energia y Soluciones SAS",
+    "owner_id": "901456321",
+    "instructions": "Pago en oficina principal",
+    "active": false,
+    "updated_at": "2026-05-06"
+  }
+]

@@ -1,0 +1,5 @@
+﻿payment_code,payment_name,account_number,account_type,bank_name,owner_name,owner_id,instructions,active,updated_at
+TRF01,Transferencia Bancolombia,01928374655,Ahorros,Bancolombia,Energia y Soluciones SAS,901456321,Enviar soporte al correo pagos@empresa.com,true,2026-05-06
+TRF02,Transferencia Davivienda,8899123412,Corriente,Davivienda,Energia y Soluciones SAS,901456321,Incluir numero de cotizacion en referencia,true,2026-05-06
+QR01,Pago QR,,,Nequi,Energia y Soluciones SAS,901456321,Solicitar QR actualizado al asesor,true,2026-05-06
+CASH01,Efectivo,,,N/A,Energia y Soluciones SAS,901456321,Pago en oficina principal,false,2026-05-06

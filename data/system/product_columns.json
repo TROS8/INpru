@@ -1,0 +1,44 @@
+[
+  {
+    "key": "product_code",
+    "label": "CODIGO",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "product_name",
+    "label": "DESCRIPCION",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "diameter",
+    "label": "DIAMETRO",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "quantity",
+    "label": "CANTIDAD",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "unit_price",
+    "label": "P. UNITARIO($)",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "total",
+    "label": "TOTAL($)",
+    "required": true,
+    "fixed": true
+  },
+  {
+    "key": "active",
+    "label": "ACTIVO",
+    "required": true,
+    "fixed": true
+  }
+]

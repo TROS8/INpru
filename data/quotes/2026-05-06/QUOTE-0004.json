@@ -1,0 +1,88 @@
+{
+  "quote_number": "QUOTE-0004",
+  "status": "issued",
+  "emitted_at": "2026-05-06T00:00:00",
+  "timezone": "America/Bogota",
+  "validity": {
+    "policy": "same_day_only",
+    "message": "Cotizacion valida unicamente para el dia de emision. Si el pago se realiza en una fecha posterior, la empresa podra actualizar precios y condiciones conforme a la lista vigente.",
+    "valid_from": "2026-05-06T00:00:00",
+    "valid_until": "2026-05-06T23:59:59"
+  },
+  "customer": {
+    "nit": "901456321",
+    "company_name": "Empresa Demo SAS",
+    "contact": "Laura Torres",
+    "project": "Sistema solar oficina",
+    "location": "Bogota",
+    "phone": "3000000000",
+    "email": "cliente@demo.com"
+  },
+  "items": [
+    {
+      "line": 1,
+      "product_code": "P002",
+      "product_name": "Bateria Litio 5kWh",
+      "quantity": 1,
+      "unit_price": 4200000,
+      "currency": "COP",
+      "requirements": {
+        "detalle": "estandar"
+      },
+      "comment": "",
+      "item_total": 4200000
+    },
+    {
+      "line": 2,
+      "product_code": "P006",
+      "product_name": "Estructura Techo 4 Paneles",
+      "quantity": 4,
+      "unit_price": 620000,
+      "currency": "COP",
+      "requirements": {
+        "detalle": "estandar"
+      },
+      "comment": "",
+      "item_total": 2480000
+    },
+    {
+      "line": 3,
+      "product_code": "P012",
+      "product_name": "Instalacion Basica",
+      "quantity": 2,
+      "unit_price": 950000,
+      "currency": "COP",
+      "requirements": {
+        "detalle": "estandar"
+      },
+      "comment": "s",
+      "item_total": 1900000
+    }
+  ],
+  "totals": {
+    "currency": "COP",
+    "subtotal": 8580000,
+    "tax_rate": 19,
+    "tax_amount": 1630200,
+    "total": 10210200
+  },
+  "payment_method": {
+    "payment_code": "QR01",
+    "payment_name": "Pago QR",
+    "account_number": "",
+    "account_type": "",
+    "bank_name": "Nequi",
+    "owner_name": "Energia y Soluciones SAS",
+    "owner_id": "901456321",
+    "instructions": "Solicitar QR actualizado al asesor",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  "estimated_delivery_date": "2026-05-15",
+  "metadata": {
+    "created_by": "asesor@empresa.com",
+    "created_at": "2026-05-06T22:30:15.306Z",
+    "products_source_updated_at": "2026-05-06",
+    "payment_methods_source_updated_at": "2026-05-06"
+  }
+}

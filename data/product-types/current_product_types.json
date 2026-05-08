@@ -1,0 +1,14 @@
+[
+  {
+    "type_code": "TP001",
+    "comment": "empalmes mecanicos roscados (PTRC) Tipo 2",
+    "active": true,
+    "updated_at": "2026-05-08"
+  },
+  {
+    "type_code": "TP002",
+    "comment": "suministro de empalmes mecanicos tipo industrial",
+    "active": true,
+    "updated_at": "2026-05-08"
+  }
+]

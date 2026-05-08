@@ -1,0 +1,62 @@
+[
+  {
+    "id": "9707b47b-12c9-41d7-9188-f2841fbba047",
+    "importedAt": "2026-05-06T21:25:05.480Z",
+    "type": "products",
+    "fileName": "productos_precios_15_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 15,
+    "errorCount": 0
+  },
+  {
+    "id": "7af78f98-8957-4ecf-b0c6-ab3615da57f5",
+    "importedAt": "2026-05-06T21:25:07.915Z",
+    "type": "payment_methods",
+    "fileName": "metodos_pago_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 4,
+    "errorCount": 0
+  },
+  {
+    "id": "3b44c679-c813-4d4a-bb56-9f6a1d6fbe9c",
+    "importedAt": "2026-05-06T21:25:10.095Z",
+    "type": "payment_methods",
+    "fileName": "metodos_pago_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 4,
+    "errorCount": 0
+  },
+  {
+    "id": "0f37aad9-b25e-4995-9bf3-c8df38572e83",
+    "importedAt": "2026-05-06T21:25:13.760Z",
+    "type": "products",
+    "fileName": "productos_precios_15_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 15,
+    "errorCount": 0
+  },
+  {
+    "id": "030a6362-efdd-429d-afbf-fed2b348608a",
+    "importedAt": "2026-05-06T21:48:03.276Z",
+    "type": "products",
+    "fileName": "productos_precios_15_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 16,
+    "errorCount": 0
+  },
+  {
+    "id": "68ee31e3-5498-4ccf-af07-74ad92485989",
+    "importedAt": "2026-05-06T21:49:03.332Z",
+    "type": "products",
+    "fileName": "productos_precios_15_seed.csv",
+    "uploadedBy": "admin@empresa.com",
+    "success": true,
+    "totalRows": 15,
+    "errorCount": 0
+  }
+]

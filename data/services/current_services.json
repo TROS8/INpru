@@ -1,0 +1,13 @@
+[
+  {
+    "service_code": "S001",
+    "description": "alquiler",
+    "unit": "DIA",
+    "quantity": 1,
+    "unit_price": 3500000,
+    "total": 3500000,
+    "active": true,
+    "updated_at": "2026-05-07",
+    "extras": {}
+  }
+]

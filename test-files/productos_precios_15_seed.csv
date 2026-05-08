@@ -1,0 +1,17 @@
+﻿product_code,product_name,unit_price,currency,active,updated_at
+P001,Panel Solar 450W,980000,COP,true,2026-05-06
+P002,Bateria Litio 5kWh,4200000,COP,true,2026-05-06
+P003,Inversor Hibrido 3kW,2600000,COP,true,2026-05-06
+P004,Inversor Hibrido 5kW,3400000,COP,true,2026-05-06
+P005,Estructura Techo 2 Paneles,350000,COP,true,2026-05-06
+P006,Estructura Techo 4 Paneles,620000,COP,true,2026-05-06
+P007,Cable Solar 6mm (metro),12000,COP,true,2026-05-06
+P008,Conector MC4 (par),18000,COP,true,2026-05-06
+P009,Proteccion DC,240000,COP,true,2026-05-06
+P010,Proteccion AC,210000,COP,true,2026-05-06
+P011,Medidor Bidireccional,480000,COP,true,2026-05-06
+P012,Instalacion Basica,950000,COP,true,2026-05-06
+P013,Visita Tecnica,180000,COP,true,2026-05-06
+P014,Mantenimiento Preventivo,320000,COP,true,2026-05-06
+P015,Monitoreo Remoto (anual),450000,COP,true,2026-05-06
+P016,Monitoreo Remoto (anual),450000,COP,true,2026-05-06

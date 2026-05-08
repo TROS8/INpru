@@ -1,0 +1,125 @@
+[
+  {
+    "product_code": "P002",
+    "product_name": "tornillo 3/4 para carga",
+    "diameter": "3/4",
+    "quantity": 1,
+    "unit_price": 350000,
+    "total": 350000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-07"
+  },
+  {
+    "product_code": "P003",
+    "product_name": "Inversor Hibrido 3kW",
+    "unit_price": 2600000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P004",
+    "product_name": "Inversor Hibrido 5kW",
+    "unit_price": 3400000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P005",
+    "product_name": "Estructura Techo 2 Paneles",
+    "unit_price": 350000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P006",
+    "product_name": "Estructura Techo 4 Paneles",
+    "unit_price": 620000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P007",
+    "product_name": "Cable Solar 6mm (metro)",
+    "unit_price": 12000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P008",
+    "product_name": "Conector MC4 (par)",
+    "unit_price": 18000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P009",
+    "product_name": "Proteccion DC",
+    "unit_price": 240000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P010",
+    "product_name": "Proteccion AC",
+    "unit_price": 210000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P011",
+    "product_name": "Medidor Bidireccional",
+    "unit_price": 480000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P012",
+    "product_name": "Instalacion Basica",
+    "unit_price": 950000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P013",
+    "product_name": "Visita Tecnica",
+    "unit_price": 180000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P014",
+    "product_name": "Mantenimiento Preventivo",
+    "unit_price": 320000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P015",
+    "product_name": "Monitoreo Remoto (anual)",
+    "unit_price": 450000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  },
+  {
+    "product_code": "P016",
+    "product_name": "Monitoreo Remoto (anual)",
+    "unit_price": 450000,
+    "currency": "COP",
+    "active": true,
+    "updated_at": "2026-05-06"
+  }
+]
