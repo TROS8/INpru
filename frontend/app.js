@@ -9,7 +9,8 @@ const state = {
   quoteServices: [],
   productTypes: [],
   quoteProductTypes: [],
-  lastQuoteNumber: ""
+  lastQuoteNumber: "",
+  wizardStep: 1
 };
 
 const el = {
@@ -88,7 +89,12 @@ const el = {
   historyClearResult: document.getElementById("historyClearResult"),
   docResult: document.getElementById("docResult"),
   templateFileInput: document.getElementById("templateFileInput"),
-  toastContainer: document.getElementById("toastContainer")
+  toastContainer: document.getElementById("toastContainer"),
+  wizardError: document.getElementById("wizardError"),
+  wizardStepLabel: document.getElementById("wizardStepLabel"),
+  wizardBarFill: document.getElementById("wizardBarFill"),
+  wizardPrev: document.getElementById("btnWizardPrev"),
+  wizardNext: document.getElementById("btnWizardNext")
 };
 
 document.getElementById("btnAddColumn").addEventListener("click", addColumn);
@@ -124,6 +130,8 @@ el.quoteFilterQuery.addEventListener("input", refreshQuoteHistory);
 el.quoteFilterDate.addEventListener("change", refreshQuoteHistory);
 el.serviceHistoryFilterCode.addEventListener("input", refreshServiceHistory);
 el.serviceHistoryFilterAction.addEventListener("change", refreshServiceHistory);
+el.wizardPrev.addEventListener("click", () => moveWizard(-1));
+el.wizardNext.addEventListener("click", () => moveWizard(1));
 
 boot();
 
@@ -145,6 +153,73 @@ async function boot() {
   renderQuoteProductTypeSelect();
   renderQuoteProductTypes();
   await refreshQuoteHistory();
+  initWizard();
+}
+
+function initWizard() {
+  renderWizard();
+}
+
+function renderWizard() {
+  const steps = Array.from(document.querySelectorAll(".wizard-step"));
+  steps.forEach((x) => x.classList.toggle("active", Number(x.dataset.step) === state.wizardStep));
+  el.wizardStepLabel.textContent = `Paso ${state.wizardStep} de 5`;
+  el.wizardBarFill.style.width = `${(state.wizardStep / 5) * 100}%`;
+  el.wizardPrev.disabled = state.wizardStep === 1;
+  el.wizardNext.textContent = state.wizardStep === 5 ? "Finalizar" : "Siguiente";
+}
+
+function moveWizard(delta) {
+  clearWizardErrors();
+  if (delta > 0 && !validateWizardStep(state.wizardStep)) return;
+  const next = state.wizardStep + delta;
+  if (next < 1 || next > 5) return;
+  state.wizardStep = next;
+  renderWizard();
+}
+
+function validateWizardStep(step) {
+  if (step !== 1) return true;
+  let ok = true;
+  const nit = el.customerNit.value.trim();
+  const company = el.customerCompanyName.value.trim();
+  const contact = el.customerContact.value.trim();
+  const project = el.customerProject.value.trim();
+  const location = el.customerLocation.value.trim();
+  const phone = el.customerPhone.value.trim();
+  const email = el.customerEmail.value.trim();
+  const taxRate = Number(el.taxRate.value);
+
+  ok = setFieldError("errCustomerNit", /^\d{8,}$/.test(nit) ? "" : "NIT invalido (minimo 8 digitos)") && ok;
+  ok = setFieldError("errCustomerCompanyName", company ? "" : "Empresa obligatoria") && ok;
+  ok = setFieldError("errCustomerContact", contact ? "" : "Contacto obligatorio") && ok;
+  ok = setFieldError("errCustomerProject", project ? "" : "Proyecto obligatorio") && ok;
+  ok = setFieldError("errCustomerLocation", location ? "" : "Ubicacion obligatoria") && ok;
+  ok = setFieldError("errCustomerPhone", /^[+]?\d{7,15}$/.test(phone) ? "" : "Telefono invalido") && ok;
+  ok = setFieldError("errCustomerEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "" : "Correo invalido") && ok;
+  ok = setFieldError("errTaxRate", Number.isFinite(taxRate) && taxRate >= 0 && taxRate <= 100 ? "" : "IVA debe estar entre 0 y 100") && ok;
+
+  if (!ok) showWizardError("Corrige los campos obligatorios antes de continuar.");
+  return ok;
+}
+
+function setFieldError(id, message) {
+  const node = document.getElementById(id);
+  if (!node) return !message;
+  node.textContent = message;
+  return !message;
+}
+
+function showWizardError(message) {
+  el.wizardError.hidden = false;
+  el.wizardError.textContent = message;
+}
+
+function clearWizardErrors() {
+  el.wizardError.hidden = true;
+  el.wizardError.textContent = "";
+  ["errCustomerNit","errCustomerCompanyName","errCustomerContact","errCustomerProject","errCustomerLocation","errCustomerPhone","errCustomerEmail","errTaxRate"]
+    .forEach((id) => setFieldError(id, ""));
 }
 
 function setupTabs() {
@@ -668,8 +743,8 @@ function addItem() {
 
   const quantity = Number(el.itemQty.value);
   const unitPrice = Number(el.itemUnitPrice.value);
-  if (!Number.isFinite(quantity) || quantity <= 0) return alert("Cantidad invalida.");
-  if (!Number.isFinite(unitPrice) || unitPrice <= 0) return alert("Precio unitario invalido.");
+  if (!Number.isInteger(quantity) || quantity <= 0) return alert("Cantidad invalida (entero mayor a 0).");
+  if (!Number.isFinite(unitPrice) || unitPrice <= 0) return alert("Precio unitario invalido (mayor a 0).");
 
   state.items.push({
     product_code: product.product_code,
@@ -733,8 +808,8 @@ function addQuoteService() {
   if (!service) return alert("Selecciona un servicio válido.");
   const quantity = Number(el.quoteServiceQty.value);
   const unitPrice = Number(el.quoteServiceUnitPrice.value);
-  if (!Number.isFinite(quantity) || quantity <= 0) return alert("Cantidad inválida.");
-  if (!Number.isFinite(unitPrice) || unitPrice <= 0) return alert("Precio unitario inválido.");
+  if (!Number.isInteger(quantity) || quantity <= 0) return alert("Cantidad invalida (entero mayor a 0).");
+  if (!Number.isFinite(unitPrice) || unitPrice <= 0) return alert("Precio unitario invalido (mayor a 0).");
 
   state.quoteServices.push({
     service_code: service.service_code,
@@ -827,6 +902,12 @@ function renderQuoteProductTypes() {
 }
 
 async function createQuote() {
+  clearWizardErrors();
+  if (!validateWizardStep(1)) {
+    state.wizardStep = 1;
+    renderWizard();
+    return;
+  }
   if (!state.items.length) return alert("Agrega al menos un item.");
   if (!state.quoteProductTypes.length) return alert("Debes elegir al menos un tipo de producto.");
 
