@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -15,164 +15,25 @@
         <p class="eyebrow">Centro Comercial</p>
         <h1>Cotizaciones SmartCouplers</h1>
       </div>
-      <div class="topbar-badge">Produccion</div>
     </header>
 
     <main class="app-shell">
-      <aside class="side-nav">
-        <a href="#adminSection">Administracion</a>
-        <a href="#quoteSection">Nueva cotizacion</a>
-        <a href="#historySection">Historial</a>
-        <a href="#docsSection">Documentos</a>
-      </aside>
-
       <section class="workspace">
         <article class="hero">
+          <p class="hero-kicker">SMARTCOUPLERS MG</p>
           <h2>Panel integral para catalogos, ventas y documentos</h2>
           <p>Administra productos y servicios, emite cotizaciones y genera Word/PDF desde una sola interfaz.</p>
         </article>
 
-        <section class="panel" id="adminSection">
-          <h3>1) Administracion de catalogos</h3>
-          <details class="accordion">
-            <summary>Columnas de productos</summary>
-            <div class="grid-two">
-              <label>Nuevo campo (key)<input id="adminColumnKey" type="text" placeholder="material" /></label>
-              <label>Etiqueta visible<input id="adminColumnLabel" type="text" placeholder="MATERIAL" /></label>
-              <label>Obligatorio<select id="adminColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
-              <label>Eliminar campo (key)<input id="adminColumnDeleteKey" type="text" placeholder="material" /></label>
-            </div>
-            <div class="grid-two">
-              <button id="btnAddColumn" type="button">Agregar columna</button>
-              <button id="btnDeleteColumn" type="button">Eliminar columna</button>
-            </div>
-            <div id="adminColumnResult" class="status-box muted">Columnas listas.</div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead>
-                <tbody id="adminColumnsBody"></tbody>
-              </table>
-            </div>
-          </details>
+        <nav class="top-tabs" id="mainTabs">
+          <button type="button" class="tab-btn active" data-tab="quoteDocs">COTIZACION</button>
+          <button type="button" class="tab-btn" data-tab="admin">ADMINISTRACION</button>
+          <button type="button" class="tab-btn" data-tab="history">HISTORIAL</button>
+          <button type="button" class="tab-btn" data-tab="template">DOCUMENTOS</button>
+        </nav>
 
-          <details class="accordion">
-            <summary>Productos</summary>
-            <div class="grid-two">
-              <label>Codigo<input id="adminProductCode" type="text" placeholder="P016" /></label>
-              <label>Descripcion<input id="adminProductName" type="text" placeholder="Producto nuevo" /></label>
-              <label>Diametro<input id="adminProductDiameter" type="text" placeholder="Ej: 1/2&quot;" /></label>
-              <label>Cantidad<input id="adminProductQuantity" type="number" min="1" value="1" /></label>
-              <label>Precio unitario<input id="adminProductPrice" type="number" min="1" step="0.01" /></label>
-              <label>Moneda<input id="adminProductCurrency" type="text" value="COP" /></label>
-              <label>Activo<select id="adminProductActive"><option value="true">true</option><option value="false">false</option></select></label>
-              <label>Usuario cambio<input id="adminChangedBy" type="text" value="admin@empresa.com" /></label>
-            </div>
-            <div class="grid-three">
-              <button id="btnAdminCreateProduct" type="button" class="primary">Crear</button>
-              <button id="btnAdminUpdateProduct" type="button">Actualizar</button>
-              <button id="btnAdminDeleteProduct" type="button" class="danger">Eliminar</button>
-            </div>
-            <div id="adminProductResult" class="status-box muted">Sin acciones recientes.</div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr id="adminProductsHead"></tr></thead>
-                <tbody id="adminProductsBody"></tbody>
-              </table>
-            </div>
-            <h4>Historial de cambios</h4>
-            <div class="grid-two">
-              <label>Filtrar por codigo<input id="historyFilterCode" type="text" placeholder="P001" /></label>
-              <label>Filtrar por accion<select id="historyFilterAction"><option value="">todas</option><option value="create">create</option><option value="update">update</option><option value="delete">delete</option></select></label>
-            </div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr><th>FECHA</th><th>ACCION</th><th>CODIGO</th><th>USUARIO</th><th>ANTES</th><th>DESPUES</th></tr></thead>
-                <tbody id="adminHistoryBody"></tbody>
-              </table>
-            </div>
-          </details>
-
-          <details class="accordion">
-            <summary>Columnas de servicios</summary>
-            <div class="grid-two">
-              <label>Nuevo campo (key)<input id="serviceColumnKey" type="text" placeholder="observacion" /></label>
-              <label>Etiqueta visible<input id="serviceColumnLabel" type="text" placeholder="OBSERVACIÓN" /></label>
-              <label>Obligatorio<select id="serviceColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
-              <label>Eliminar campo (key)<input id="serviceColumnDeleteKey" type="text" placeholder="observacion" /></label>
-            </div>
-            <div class="grid-two">
-              <button id="btnAddServiceColumn" type="button">Agregar columna</button>
-              <button id="btnDeleteServiceColumn" type="button">Eliminar columna</button>
-            </div>
-            <div id="serviceColumnResult" class="status-box muted">Columnas de servicios listas.</div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead>
-                <tbody id="serviceColumnsBody"></tbody>
-              </table>
-            </div>
-          </details>
-
-          <details class="accordion">
-            <summary>Servicios</summary>
-            <div class="grid-two">
-              <label>Codigo<input id="serviceCode" type="text" placeholder="S001" /></label>
-              <label>Descripción<input id="serviceDescription" type="text" placeholder="Alquiler de máquina roscadora..." /></label>
-              <label>Und.<input id="serviceUnit" type="text" placeholder="Dia" /></label>
-              <label>P. UNITARIO ($)<input id="serviceUnitPrice" type="number" min="1" step="0.01" /></label>
-              <label>Activo<select id="serviceActive"><option value="true">true</option><option value="false">false</option></select></label>
-              <label>Usuario cambio<input id="serviceChangedBy" type="text" value="admin@empresa.com" /></label>
-            </div>
-            <div class="grid-three">
-              <button id="btnCreateService" type="button" class="primary">Crear</button>
-              <button id="btnUpdateService" type="button">Actualizar</button>
-              <button id="btnDeleteService" type="button" class="danger">Eliminar</button>
-            </div>
-            <div id="serviceResult" class="status-box muted">Sin acciones recientes en servicios.</div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr id="servicesHead"></tr></thead>
-                <tbody id="servicesBody"></tbody>
-              </table>
-            </div>
-            <h4>Historial de servicios</h4>
-            <div class="grid-two">
-              <label>Filtrar por codigo<input id="serviceHistoryFilterCode" type="text" placeholder="S001" /></label>
-              <label>Filtrar por accion<select id="serviceHistoryFilterAction"><option value="">todas</option><option value="create">create</option><option value="update">update</option><option value="delete">delete</option></select></label>
-            </div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr><th>FECHA</th><th>ACCION</th><th>CODIGO</th><th>USUARIO</th><th>ANTES</th><th>DESPUES</th></tr></thead>
-                <tbody id="serviceHistoryBody"></tbody>
-              </table>
-            </div>
-          </details>
-
-          <details class="accordion">
-            <summary>Tipos de producto</summary>
-            <div class="grid-two">
-              <label>Codigo<input id="productTypeCode" type="text" placeholder="TP001" /></label>
-              <label>Comentario<input id="productTypeComment" type="text" placeholder="empalmes mecanicos roscados..." /></label>
-              <label>Activo<select id="productTypeActive"><option value="true">true</option><option value="false">false</option></select></label>
-              <label>Usuario cambio<input id="productTypeChangedBy" type="text" value="admin@empresa.com" /></label>
-            </div>
-            <div class="grid-three">
-              <button id="btnCreateProductType" type="button" class="primary">Crear</button>
-              <button id="btnUpdateProductType" type="button">Actualizar</button>
-              <button id="btnDeleteProductType" type="button" class="danger">Eliminar</button>
-            </div>
-            <div id="productTypeResult" class="status-box muted">Sin acciones recientes en tipos de producto.</div>
-            <div class="table-wrap">
-              <table class="items-table">
-                <thead><tr><th>CODIGO</th><th>COMENTARIO</th><th>ACTIVO</th></tr></thead>
-                <tbody id="productTypesBody"></tbody>
-              </table>
-            </div>
-          </details>
-        </section>
-
-        <section class="panel" id="quoteSection">
-          <h3>2) Nueva cotizacion</h3>
+        <section class="panel tab-panel active" id="quoteSection" data-tab="quoteDocs">
+          <h3>Cotizacion</h3>
           <div class="grid-two">
             <label>NIT<input id="customerNit" type="text" /></label>
             <label>Empresa<input id="customerCompanyName" type="text" /></label>
@@ -215,10 +76,125 @@
 
           <button id="btnCreateQuote" type="button" class="primary action-main">Emitir cotizacion</button>
           <div id="quoteResult" class="status-box muted">Sin cotizaciones emitidas en esta sesion.</div>
+
+          <div class="block">
+            <h4>Generar documentos y visualizacion</h4>
+            <div class="grid-two">
+              <button id="btnGenerateDocs" type="button" class="primary">Generar Word + PDF</button>
+              <div id="docResult" class="status-box muted">Genera una cotizacion para habilitar exportacion.</div>
+            </div>
+            <article id="quotePreview" class="quote-preview">
+              <p class="muted">Selecciona una cotizacion desde el historial o emite una nueva, y luego genera los documentos.</p>
+            </article>
+          </div>
         </section>
 
-        <section class="panel" id="historySection">
-          <h3>3) Historial</h3>
+        <section class="panel tab-panel" id="adminSection" data-tab="admin">
+          <h3>Administracion de catalogos</h3>
+          <details class="accordion">
+            <summary>Columnas de productos</summary>
+            <div class="grid-two">
+              <label>Nuevo campo (key)<input id="adminColumnKey" type="text" placeholder="material" /></label>
+              <label>Etiqueta visible<input id="adminColumnLabel" type="text" placeholder="MATERIAL" /></label>
+              <label>Obligatorio<select id="adminColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
+              <label>Eliminar campo (key)<input id="adminColumnDeleteKey" type="text" placeholder="material" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnAddColumn" type="button">Agregar columna</button>
+              <button id="btnDeleteColumn" type="button">Eliminar columna</button>
+            </div>
+            <div id="adminColumnResult" class="status-box muted">Columnas listas.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="adminColumnsBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion">
+            <summary>Productos</summary>
+            <div class="grid-two">
+              <label>Codigo<input id="adminProductCode" type="text" placeholder="P016" /></label>
+              <label>Descripcion<input id="adminProductName" type="text" placeholder="Producto nuevo" /></label>
+              <label>Diametro<input id="adminProductDiameter" type="text" placeholder="Ej: 1/2&quot;" /></label>
+              <label>Cantidad<input id="adminProductQuantity" type="number" min="1" value="1" /></label>
+              <label>Precio unitario<input id="adminProductPrice" type="number" min="1" step="0.01" /></label>
+              <label>Moneda<input id="adminProductCurrency" type="text" value="COP" /></label>
+              <label>Activo<select id="adminProductActive"><option value="true">true</option><option value="false">false</option></select></label>
+              <label>Usuario cambio<input id="adminChangedBy" type="text" value="admin@empresa.com" /></label>
+            </div>
+            <div class="grid-three">
+              <button id="btnAdminCreateProduct" type="button" class="primary">Crear</button>
+              <button id="btnAdminUpdateProduct" type="button">Actualizar</button>
+              <button id="btnAdminDeleteProduct" type="button" class="danger">Eliminar</button>
+            </div>
+            <div id="adminProductResult" class="status-box muted">Sin acciones recientes.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr id="adminProductsHead"></tr></thead><tbody id="adminProductsBody"></tbody></table></div>
+            <h4>Historial de cambios</h4>
+            <div class="grid-two">
+              <label>Filtrar por codigo<input id="historyFilterCode" type="text" placeholder="P001" /></label>
+              <label>Filtrar por accion<select id="historyFilterAction"><option value="">todas</option><option value="create">create</option><option value="update">update</option><option value="delete">delete</option></select></label>
+            </div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>FECHA</th><th>ACCION</th><th>CODIGO</th><th>USUARIO</th><th>ANTES</th><th>DESPUES</th></tr></thead><tbody id="adminHistoryBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion">
+            <summary>Columnas de servicios</summary>
+            <div class="grid-two">
+              <label>Nuevo campo (key)<input id="serviceColumnKey" type="text" placeholder="observacion" /></label>
+              <label>Etiqueta visible<input id="serviceColumnLabel" type="text" placeholder="OBSERVACION" /></label>
+              <label>Obligatorio<select id="serviceColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
+              <label>Eliminar campo (key)<input id="serviceColumnDeleteKey" type="text" placeholder="observacion" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnAddServiceColumn" type="button">Agregar columna</button>
+              <button id="btnDeleteServiceColumn" type="button">Eliminar columna</button>
+            </div>
+            <div id="serviceColumnResult" class="status-box muted">Columnas de servicios listas.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="serviceColumnsBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion">
+            <summary>Servicios</summary>
+            <div class="grid-two">
+              <label>Codigo<input id="serviceCode" type="text" placeholder="S001" /></label>
+              <label>Descripcion<input id="serviceDescription" type="text" placeholder="Alquiler de maquina roscadora..." /></label>
+              <label>Und.<input id="serviceUnit" type="text" placeholder="Dia" /></label>
+              <label>P. UNITARIO ($)<input id="serviceUnitPrice" type="number" min="1" step="0.01" /></label>
+              <label>Activo<select id="serviceActive"><option value="true">true</option><option value="false">false</option></select></label>
+              <label>Usuario cambio<input id="serviceChangedBy" type="text" value="admin@empresa.com" /></label>
+            </div>
+            <div class="grid-three">
+              <button id="btnCreateService" type="button" class="primary">Crear</button>
+              <button id="btnUpdateService" type="button">Actualizar</button>
+              <button id="btnDeleteService" type="button" class="danger">Eliminar</button>
+            </div>
+            <div id="serviceResult" class="status-box muted">Sin acciones recientes en servicios.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr id="servicesHead"></tr></thead><tbody id="servicesBody"></tbody></table></div>
+            <h4>Historial de servicios</h4>
+            <div class="grid-two">
+              <label>Filtrar por codigo<input id="serviceHistoryFilterCode" type="text" placeholder="S001" /></label>
+              <label>Filtrar por accion<select id="serviceHistoryFilterAction"><option value="">todas</option><option value="create">create</option><option value="update">update</option><option value="delete">delete</option></select></label>
+            </div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>FECHA</th><th>ACCION</th><th>CODIGO</th><th>USUARIO</th><th>ANTES</th><th>DESPUES</th></tr></thead><tbody id="serviceHistoryBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion">
+            <summary>Tipos de producto</summary>
+            <div class="grid-two">
+              <label>Codigo<input id="productTypeCode" type="text" placeholder="TP001" /></label>
+              <label>Comentario<input id="productTypeComment" type="text" placeholder="empalmes mecanicos roscados..." /></label>
+              <label>Activo<select id="productTypeActive"><option value="true">true</option><option value="false">false</option></select></label>
+              <label>Usuario cambio<input id="productTypeChangedBy" type="text" value="admin@empresa.com" /></label>
+            </div>
+            <div class="grid-three">
+              <button id="btnCreateProductType" type="button" class="primary">Crear</button>
+              <button id="btnUpdateProductType" type="button">Actualizar</button>
+              <button id="btnDeleteProductType" type="button" class="danger">Eliminar</button>
+            </div>
+            <div id="productTypeResult" class="status-box muted">Sin acciones recientes en tipos de producto.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>CODIGO</th><th>COMENTARIO</th><th>ACTIVO</th></tr></thead><tbody id="productTypesBody"></tbody></table></div>
+          </details>
+        </section>
+
+        <section class="panel tab-panel" id="historySection" data-tab="history">
+          <h3>Historial de cotizaciones</h3>
           <div class="grid-two">
             <button id="btnClearAllHistory" type="button" class="danger">Eliminar historial (productos, servicios y cotizaciones)</button>
             <div id="historyClearResult" class="status-box muted">El historial se puede limpiar desde aqui.</div>
@@ -230,24 +206,18 @@
           <div class="table-wrap"><table class="items-table"><thead><tr><th>NUMERO</th><th>FECHA</th><th>NIT</th><th>EMPRESA</th><th>TOTAL</th></tr></thead><tbody id="quoteHistoryBody"></tbody></table></div>
         </section>
 
-        <section class="panel" id="docsSection">
-          <h3>4) Documentos</h3>
-          <div class="grid-two">
-            <button id="btnGenerateDocs" type="button" class="primary">Generar Word + PDF</button>
-            <div id="docResult" class="status-box muted">Genera una cotizacion para habilitar exportacion.</div>
-          </div>
+        <section class="panel tab-panel" id="templateSection" data-tab="template">
+          <h3>Documentos y plantilla</h3>
           <div class="grid-two">
             <button id="btnDownloadTemplate" type="button">Descargar Word guia actual</button>
             <label>Subir nuevo Word guia (.docx)<input id="templateFileInput" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" /></label>
             <button id="btnUploadTemplate" type="button">Actualizar Word guia</button>
           </div>
-          <article id="quotePreview" class="quote-preview">
-            <p class="muted">Selecciona una cotizacion desde el historial o emite una nueva, y luego genera los documentos.</p>
-          </article>
         </section>
       </section>
     </main>
 
+    <section id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></section>
     <button id="btnBackToTop" class="fab-top" type="button" aria-label="Volver arriba">Subir</button>
     <script type="module" src="/app.js"></script>
   </body>

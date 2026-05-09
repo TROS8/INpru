@@ -87,7 +87,8 @@ const el = {
   quoteHistoryBody: document.getElementById("quoteHistoryBody"),
   historyClearResult: document.getElementById("historyClearResult"),
   docResult: document.getElementById("docResult"),
-  templateFileInput: document.getElementById("templateFileInput")
+  templateFileInput: document.getElementById("templateFileInput"),
+  toastContainer: document.getElementById("toastContainer")
 };
 
 document.getElementById("btnAddColumn").addEventListener("click", addColumn);
@@ -127,6 +128,7 @@ el.serviceHistoryFilterAction.addEventListener("change", refreshServiceHistory);
 boot();
 
 async function boot() {
+  setupTabs();
   setupAccordionUX();
   setupBackToTopUX();
   await refreshColumns();
@@ -143,6 +145,29 @@ async function boot() {
   renderQuoteProductTypeSelect();
   renderQuoteProductTypes();
   await refreshQuoteHistory();
+}
+
+function setupTabs() {
+  const tabs = Array.from(document.querySelectorAll(".tab-btn"));
+  const panels = Array.from(document.querySelectorAll(".tab-panel"));
+  const activate = (tabName) => {
+    if (!tabName) return;
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabName));
+    panels.forEach((p) => p.classList.toggle("active", p.dataset.tab === tabName));
+    window.localStorage.setItem("smartcouplers.activeTab", tabName);
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      activate(tab.dataset.tab);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  const fromStorage = window.localStorage.getItem("smartcouplers.activeTab");
+  if (fromStorage && panels.some((p) => p.dataset.tab === fromStorage)) {
+    activate(fromStorage);
+  }
 }
 
 function setupAccordionUX() {
@@ -187,6 +212,8 @@ function renderQuoteItemsHead() {
 }
 
 async function addColumn() {
+  const btn = document.getElementById("btnAddColumn");
+  setLoading(btn, true);
   try {
     const payload = {
       key: el.adminColumnKey.value.trim(),
@@ -205,6 +232,8 @@ async function addColumn() {
     renderItems();
   } catch (error) {
     showStatus(el.adminColumnResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -266,6 +295,8 @@ function syncSelectedQuoteServicePrice() {
 }
 
 async function createProductAdmin() {
+  const btn = document.getElementById("btnAdminCreateProduct");
+  setLoading(btn, true);
   try {
     const payload = readAdminProductForm();
     const response = await fetch(`${API}/api/products`, {
@@ -280,6 +311,8 @@ async function createProductAdmin() {
     await refreshHistory();
   } catch (error) {
     showStatus(el.adminProductResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -463,6 +496,8 @@ function readServiceForm() {
 }
 
 async function createService() {
+  const btn = document.getElementById("btnCreateService");
+  setLoading(btn, true);
   try {
     const payload = readServiceForm();
     const response = await fetch(`${API}/api/services`, {
@@ -476,6 +511,8 @@ async function createService() {
     await refreshServiceHistory();
   } catch (error) {
     showStatus(el.serviceResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -561,6 +598,8 @@ function readProductTypeForm() {
 }
 
 async function createProductType() {
+  const btn = document.getElementById("btnCreateProductType");
+  setLoading(btn, true);
   try {
     const payload = readProductTypeForm();
     const response = await fetch(`${API}/api/product-types`, {
@@ -573,6 +612,8 @@ async function createProductType() {
     await refreshProductTypes();
   } catch (error) {
     showStatus(el.productTypeResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -805,6 +846,8 @@ async function createQuote() {
     taxRate: Number(el.taxRate.value || 0)
   };
 
+  const btn = document.getElementById("btnCreateQuote");
+  setLoading(btn, true);
   try {
     const response = await fetch(`${API}/api/quotes`, {
       method: "POST",
@@ -830,6 +873,8 @@ async function createQuote() {
     }
   } catch (error) {
     showStatus(el.quoteResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -839,6 +884,8 @@ async function generateDocuments() {
     return;
   }
 
+  const btn = document.getElementById("btnGenerateDocs");
+  setLoading(btn, true);
   try {
     const response = await fetch(`${API}/api/quotes/${encodeURIComponent(state.lastQuoteNumber)}/export-pdf`, {
       method: "POST"
@@ -855,6 +902,8 @@ async function generateDocuments() {
     showStatus(el.docResult, msg, "ok");
   } catch (error) {
     showStatus(el.docResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -908,6 +957,8 @@ async function clearAllHistory() {
 }
 
 async function uploadTemplate() {
+  const btn = document.getElementById("btnUploadTemplate");
+  setLoading(btn, true);
   try {
     const file = el.templateFileInput.files?.[0];
     if (!file) throw new Error("Selecciona un archivo .docx");
@@ -926,6 +977,8 @@ async function uploadTemplate() {
     showStatus(el.docResult, `${data.message}.`, "ok");
   } catch (error) {
     showStatus(el.docResult, error.message, "error");
+  } finally {
+    setLoading(btn, false);
   }
 }
 
@@ -1008,6 +1061,26 @@ function formatMoney(value) {
 function showStatus(target, message, type) {
   target.className = `status-box ${type === "error" ? "status-error" : "status-ok"}`;
   target.textContent = message;
+  showToast(message, type === "error" ? "error" : "ok");
+}
+
+function showToast(message, type = "ok") {
+  if (!el.toastContainer) return;
+  const toast = document.createElement("article");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  el.toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 3200);
+}
+
+function setLoading(button, loading) {
+  if (!button) return;
+  if (!button.dataset.originalLabel) button.dataset.originalLabel = button.textContent;
+  button.classList.toggle("loading", loading);
+  button.disabled = loading;
+  button.textContent = loading ? "Procesando..." : button.dataset.originalLabel;
 }
 
 function shortDate(iso) {
