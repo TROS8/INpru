@@ -17,6 +17,7 @@ body {
   margin: 0;
   font-family: "Manrope", sans-serif;
   color: var(--ink);
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 5% 0%, #d3e7df 0, transparent 38%),
     radial-gradient(circle at 95% 12%, #cde4db 0, transparent 42%),
@@ -56,6 +57,12 @@ body {
 }
 
 .workspace { display: grid; gap: 14px; }
+.workspace,
+.panel,
+.block,
+.table-wrap {
+  min-width: 0;
+}
 
 .hero {
   background:
@@ -79,6 +86,7 @@ body {
   margin: 0 0 8px;
   font-family: "Space Grotesk", sans-serif;
   letter-spacing: -0.02em;
+  word-break: break-word;
 }
 .hero p { margin: 0; color: var(--muted); }
 
@@ -104,6 +112,7 @@ body {
   border: 1px solid #cfe0da;
   border-radius: 14px;
   background: linear-gradient(180deg, #f4faf8, #ecf5f1);
+  min-width: 0;
 }
 
 .tab-btn {
@@ -114,6 +123,7 @@ body {
   font-weight: 800;
   letter-spacing: 0.02em;
   transition: 0.18s ease;
+  white-space: nowrap;
 }
 
 .tab-btn.active {
@@ -265,6 +275,7 @@ button.loading {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  min-width: 760px;
 }
 
 .items-table th, .items-table td {
@@ -395,7 +406,7 @@ button.loading {
     padding: 16px 14px;
   }
   .topbar h1 {
-    font-size: 30px;
+    font-size: clamp(22px, 4.2vw, 30px);
     line-height: 1.05;
   }
   .hero {
@@ -427,10 +438,10 @@ button.loading {
     font-size: 11px;
   }
   .topbar h1 {
-    font-size: 25px;
+    font-size: clamp(20px, 6vw, 25px);
   }
   .hero h2 {
-    font-size: 28px;
+    font-size: clamp(20px, 7vw, 28px);
     line-height: 1.1;
   }
   .hero p {
@@ -440,12 +451,14 @@ button.loading {
     display: flex;
     gap: 8px;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 8px;
     scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
   }
   .tab-btn {
     flex: 0 0 auto;
-    min-width: 180px;
+    min-width: 150px;
     scroll-snap-align: start;
   }
   .block {
@@ -458,6 +471,10 @@ button.loading {
     right: 10px;
     top: 10px;
     width: calc(100vw - 20px);
+  }
+  .status-box {
+    font-size: 12px;
+    word-break: break-word;
   }
 }
 
@@ -478,7 +495,7 @@ button.loading {
     font-size: 24px;
   }
   .tab-btn {
-    min-width: 160px;
+    min-width: 132px;
     padding: 9px 10px;
     font-size: 12px;
   }
@@ -493,6 +510,7 @@ button.loading {
   }
   .items-table {
     font-size: 11px;
+    min-width: 640px;
   }
   .items-table th,
   .items-table td {
@@ -504,6 +522,11 @@ button.loading {
     bottom: 10px;
     min-width: 62px;
     padding: 8px 10px;
+  }
+  .accordion summary {
+    font-size: 22px;
+    line-height: 1.25;
+    word-break: break-word;
   }
 }
 
