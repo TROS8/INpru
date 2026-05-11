@@ -30,6 +30,7 @@
           <button type="button" class="tab-btn" data-tab="admin">ADMINISTRACION</button>
           <button type="button" class="tab-btn" data-tab="history">HISTORIAL</button>
           <button type="button" class="tab-btn" data-tab="template">DOCUMENTOS</button>
+          <button type="button" class="tab-btn" data-tab="columnsIva">COLUMNAS E IVA</button>
         </nav>
 
         <section class="panel tab-panel active" id="quoteSection" data-tab="quoteDocs">
@@ -90,7 +91,7 @@
             <div id="docResult" class="status-box muted">Al finalizar, se descarga el Word automaticamente.</div>
             <div class="grid-two">
               <button id="btnNewQuoteReset" type="button">Realizar nueva cotizacion</button>
-              <button id="btnBackStep1Keep" type="button">Volver al paso 1 (conservar info)</button>
+              <button id="btnBackStep1Keep" type="button">Volver al paso 1 (conservar informacion)</button>
             </div>
             <article id="quotePreview" class="quote-preview">
               <p class="muted">Selecciona una cotizacion desde el historial o emite una nueva, y luego genera los documentos.</p>
@@ -103,22 +104,7 @@
         </section>
 
         <section class="panel tab-panel" id="adminSection" data-tab="admin">
-          <h3>Administracion de catalogos</h3>
-          <details class="accordion">
-            <summary>Columnas de productos</summary>
-            <div class="grid-two">
-              <label>Nuevo campo (key)<input id="adminColumnKey" type="text" placeholder="material" /></label>
-              <label>Etiqueta visible<input id="adminColumnLabel" type="text" placeholder="MATERIAL" /></label>
-              <label>Obligatorio<select id="adminColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
-              <label>Eliminar campo (key)<input id="adminColumnDeleteKey" type="text" placeholder="material" /></label>
-            </div>
-            <div class="grid-two">
-              <button id="btnAddColumn" type="button">Agregar columna</button>
-              <button id="btnDeleteColumn" type="button">Eliminar columna</button>
-            </div>
-            <div id="adminColumnResult" class="status-box muted">Columnas listas.</div>
-            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="adminColumnsBody"></tbody></table></div>
-          </details>
+          <h3>Administracion general</h3>
 
           <details class="accordion">
             <summary>Productos</summary>
@@ -145,22 +131,6 @@
               <label>Filtrar por accion<select id="historyFilterAction"><option value="">todas</option><option value="create">create</option><option value="update">update</option><option value="delete">delete</option></select></label>
             </div>
             <div class="table-wrap"><table class="items-table"><thead><tr><th>FECHA</th><th>ACCION</th><th>CODIGO</th><th>USUARIO</th><th>ANTES</th><th>DESPUES</th></tr></thead><tbody id="adminHistoryBody"></tbody></table></div>
-          </details>
-
-          <details class="accordion">
-            <summary>Columnas de servicios</summary>
-            <div class="grid-two">
-              <label>Nuevo campo (key)<input id="serviceColumnKey" type="text" placeholder="observacion" /></label>
-              <label>Etiqueta visible<input id="serviceColumnLabel" type="text" placeholder="OBSERVACION" /></label>
-              <label>Obligatorio<select id="serviceColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
-              <label>Eliminar campo (key)<input id="serviceColumnDeleteKey" type="text" placeholder="observacion" /></label>
-            </div>
-            <div class="grid-two">
-              <button id="btnAddServiceColumn" type="button">Agregar columna</button>
-              <button id="btnDeleteServiceColumn" type="button">Eliminar columna</button>
-            </div>
-            <div id="serviceColumnResult" class="status-box muted">Columnas de servicios listas.</div>
-            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="serviceColumnsBody"></tbody></table></div>
           </details>
 
           <details class="accordion">
@@ -203,17 +173,6 @@
             </div>
             <div id="productTypeResult" class="status-box muted">Sin acciones recientes en tipos de producto.</div>
             <div class="table-wrap"><table class="items-table"><thead><tr><th>CODIGO</th><th>COMENTARIO</th><th>ACTIVO</th></tr></thead><tbody id="productTypesBody"></tbody></table></div>
-          </details>
-
-          <details class="accordion">
-            <summary>IVA</summary>
-            <div class="grid-two">
-              <label>IVA global (%)<input id="adminIvaValue" type="number" min="0" max="100" step="0.01" value="19" /></label>
-            </div>
-            <div class="grid-two">
-              <button id="btnSaveIva" type="button" class="primary">Guardar IVA</button>
-              <div id="adminIvaResult" class="status-box muted">Valor predeterminado: 19%</div>
-            </div>
           </details>
 
           <details class="accordion">
@@ -269,11 +228,58 @@
             <button id="btnUploadTemplate" type="button">Actualizar Word guia</button>
           </div>
         </section>
+
+        <section class="panel tab-panel" id="columnsIvaSection" data-tab="columnsIva">
+          <h3>Columnas e IVA</h3>
+          <p class="muted section-intro">Centraliza aqui la estructura de columnas para productos/servicios y el IVA global del sistema.</p>
+
+          <details class="accordion" open>
+            <summary>Columnas de productos</summary>
+            <div class="grid-two">
+              <label>Nuevo campo (key)<input id="adminColumnKey" type="text" placeholder="material" /></label>
+              <label>Etiqueta visible<input id="adminColumnLabel" type="text" placeholder="MATERIAL" /></label>
+              <label>Obligatorio<select id="adminColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
+              <label>Eliminar campo (key)<input id="adminColumnDeleteKey" type="text" placeholder="material" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnAddColumn" type="button">Agregar columna</button>
+              <button id="btnDeleteColumn" type="button">Eliminar columna</button>
+            </div>
+            <div id="adminColumnResult" class="status-box muted">Columnas listas.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="adminColumnsBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion" open>
+            <summary>Columnas de servicios</summary>
+            <div class="grid-two">
+              <label>Nuevo campo (key)<input id="serviceColumnKey" type="text" placeholder="observacion" /></label>
+              <label>Etiqueta visible<input id="serviceColumnLabel" type="text" placeholder="OBSERVACION" /></label>
+              <label>Obligatorio<select id="serviceColumnRequired"><option value="false">false</option><option value="true">true</option></select></label>
+              <label>Eliminar campo (key)<input id="serviceColumnDeleteKey" type="text" placeholder="observacion" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnAddServiceColumn" type="button">Agregar columna</button>
+              <button id="btnDeleteServiceColumn" type="button">Eliminar columna</button>
+            </div>
+            <div id="serviceColumnResult" class="status-box muted">Columnas de servicios listas.</div>
+            <div class="table-wrap"><table class="items-table"><thead><tr><th>KEY</th><th>ETIQUETA</th><th>OBLIGATORIO</th><th>FIJA</th></tr></thead><tbody id="serviceColumnsBody"></tbody></table></div>
+          </details>
+
+          <details class="accordion" open>
+            <summary>IVA</summary>
+            <div class="grid-two">
+              <label>IVA global (%)<input id="adminIvaValue" type="number" min="0" max="100" step="0.01" value="19" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnSaveIva" type="button" class="primary">Guardar IVA</button>
+              <div id="adminIvaResult" class="status-box muted">Valor predeterminado: 19%</div>
+            </div>
+          </details>
+        </section>
       </section>
     </main>
 
     <section id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></section>
-    <button id="btnBackToTop" class="fab-top" type="button" aria-label="Volver arriba">Subir</button>
     <script type="module" src="/app.js"></script>
   </body>
 </html>

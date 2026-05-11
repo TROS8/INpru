@@ -140,9 +140,6 @@ document.getElementById("btnCreateCompany").addEventListener("click", createComp
 document.getElementById("btnCancelCompanyEdit").addEventListener("click", resetCompanyForm);
 document.getElementById("btnNewQuoteReset").addEventListener("click", startNewQuoteReset);
 document.getElementById("btnBackStep1Keep").addEventListener("click", backToStep1KeepData);
-document.getElementById("btnBackToTop").addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
 el.customerNit.addEventListener("blur", lookupCustomerByNit);
 el.customerNit.addEventListener("input", refreshCustomerSuggestions);
 el.customerNit.addEventListener("input", unlockCustomerIdentityFields);
@@ -173,7 +170,6 @@ boot();
 async function boot() {
   setupTabs();
   setupAccordionUX();
-  setupBackToTopUX();
   await refreshColumns();
   await refreshCatalogs();
   await refreshProductsAdmin();
@@ -306,16 +302,6 @@ function setupAccordionUX() {
       });
     });
   });
-}
-
-function setupBackToTopUX() {
-  const button = document.getElementById("btnBackToTop");
-  const update = () => {
-    if (window.scrollY > 380) button.classList.add("show");
-    else button.classList.remove("show");
-  };
-  window.addEventListener("scroll", update, { passive: true });
-  update();
 }
 
 async function refreshColumns() {
