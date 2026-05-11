@@ -1,0 +1,64 @@
+{
+  "quote_number": "QUOTE-0032",
+  "status": "issued",
+  "emitted_at": "2026-05-11T00:00:00",
+  "timezone": "America/Bogota",
+  "validity": {
+    "policy": "same_day_only",
+    "message": "Cotizacion valida unicamente para el dia de emision. Si el pago se realiza en una fecha posterior, la empresa podra actualizar precios y condiciones conforme a la lista vigente.",
+    "valid_from": "2026-05-11T00:00:00",
+    "valid_until": "2026-05-11T23:59:59"
+  },
+  "customer": {
+    "nit": "901456321",
+    "company_name": "Empresa Demo SAS",
+    "contact": "Laura Torres",
+    "project": "Sistema solar oficina",
+    "location": "Bogota",
+    "phone": "3000000000",
+    "email": "cliente@demo.com"
+  },
+  "items": [
+    {
+      "line": 1,
+      "product_code": "P002",
+      "description": "tornillo 3/4 para carga",
+      "diameter": "3/4",
+      "quantity": 1,
+      "unit_price": 350000,
+      "currency": "COP",
+      "extras": {},
+      "item_total": 350000
+    }
+  ],
+  "services": [],
+  "product_types": [
+    {
+      "line": 1,
+      "type_code": "TP002",
+      "comment": "suministro de empalmes mecanicos tipo industrial"
+    }
+  ],
+  "totals": {
+    "currency": "COP",
+    "products_subtotal": 350000,
+    "products_tax_amount": 66500,
+    "products_total": 416500,
+    "services_subtotal": 0,
+    "services_tax_amount": 0,
+    "services_total": 0,
+    "grand_subtotal": 350000,
+    "grand_tax_amount": 66500,
+    "grand_total": 416500,
+    "subtotal": 350000,
+    "tax_rate": 19,
+    "tax_amount": 66500,
+    "total": 416500
+  },
+  "estimated_delivery_date": "2026-05-20",
+  "metadata": {
+    "created_by": "anonymous",
+    "created_at": "2026-05-11T20:39:53.758Z",
+    "products_source_updated_at": "2026-05-07"
+  }
+}

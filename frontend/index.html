@@ -43,15 +43,16 @@
           <div class="block wizard-step" data-step="1">
             <h4>1) Datos cliente</h4>
             <div class="grid-two">
-              <label>NIT<input id="customerNit" type="text" /><small class="field-error" id="errCustomerNit"></small></label>
+              <label>NIT<input id="customerNit" type="text" list="customerNitSuggestions" placeholder="Escribe para ver NIT registrados" /><small class="field-error" id="errCustomerNit"></small></label>
               <label>Empresa<input id="customerCompanyName" type="text" /><small class="field-error" id="errCustomerCompanyName"></small></label>
               <label>Contacto<input id="customerContact" type="text" /><small class="field-error" id="errCustomerContact"></small></label>
               <label>Proyecto<input id="customerProject" type="text" /><small class="field-error" id="errCustomerProject"></small></label>
               <label>Ubicacion<input id="customerLocation" type="text" /><small class="field-error" id="errCustomerLocation"></small></label>
               <label>Telefono<input id="customerPhone" type="text" /><small class="field-error" id="errCustomerPhone"></small></label>
               <label>Correo<input id="customerEmail" type="email" /><small class="field-error" id="errCustomerEmail"></small></label>
-              <label>IVA (%)<input id="taxRate" type="number" min="0" value="19" /><small class="field-error" id="errTaxRate"></small></label>
             </div>
+            <datalist id="customerNitSuggestions"></datalist>
+            <div id="customerCompanyFileInfo" class="status-box muted">Archivo de empresa: no disponible.</div>
           </div>
 
           <div class="block wizard-step" data-step="2">
@@ -84,12 +85,12 @@
           </div>
 
           <div class="block wizard-step" data-step="5">
-            <h4>Generar documentos y visualizacion</h4>
-            <button id="btnCreateQuote" type="button" class="primary action-main">Emitir cotizacion</button>
+            <h4>Previsualizacion final</h4>
             <div id="quoteResult" class="status-box muted">Sin cotizaciones emitidas en esta sesion.</div>
+            <div id="docResult" class="status-box muted">Al finalizar, se descarga el Word automaticamente.</div>
             <div class="grid-two">
-              <button id="btnGenerateDocs" type="button" class="primary">Generar Word + PDF</button>
-              <div id="docResult" class="status-box muted">Genera una cotizacion para habilitar exportacion.</div>
+              <button id="btnNewQuoteReset" type="button">Realizar nueva cotizacion</button>
+              <button id="btnBackStep1Keep" type="button">Volver al paso 1 (conservar info)</button>
             </div>
             <article id="quotePreview" class="quote-preview">
               <p class="muted">Selecciona una cotizacion desde el historial o emite una nueva, y luego genera los documentos.</p>
@@ -203,6 +204,44 @@
             <div id="productTypeResult" class="status-box muted">Sin acciones recientes en tipos de producto.</div>
             <div class="table-wrap"><table class="items-table"><thead><tr><th>CODIGO</th><th>COMENTARIO</th><th>ACTIVO</th></tr></thead><tbody id="productTypesBody"></tbody></table></div>
           </details>
+
+          <details class="accordion">
+            <summary>IVA</summary>
+            <div class="grid-two">
+              <label>IVA global (%)<input id="adminIvaValue" type="number" min="0" max="100" step="0.01" value="19" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnSaveIva" type="button" class="primary">Guardar IVA</button>
+              <div id="adminIvaResult" class="status-box muted">Valor predeterminado: 19%</div>
+            </div>
+          </details>
+
+          <details class="accordion">
+            <summary>Empresa</summary>
+            <div class="grid-two">
+              <label>NIT (obligatorio)<input id="companyNit" type="text" /></label>
+              <label>Empresa (obligatorio)<input id="companyName" type="text" /></label>
+              <label>Correo (obligatorio)<input id="companyEmail" type="email" /></label>
+              <label>Telefono (obligatorio)<input id="companyPhone" type="text" /></label>
+              <label>Proyecto<input id="companyProject" type="text" /></label>
+              <label>Contacto<input id="companyContact" type="text" /></label>
+              <label>Direccion<input id="companyAddress" type="text" /></label>
+            </div>
+            <div class="grid-two">
+              <label>Archivo opcional para esta empresa<input id="companyFileInput" type="file" /></label>
+            </div>
+            <div class="grid-two">
+              <button id="btnCreateCompany" type="button" class="primary">Registrar empresa</button>
+              <button id="btnCancelCompanyEdit" type="button">Cancelar edicion</button>
+              <div id="companyResult" class="status-box muted">Puedes registrar empresa con o sin archivo.</div>
+            </div>
+            <div class="table-wrap">
+              <table class="items-table">
+                <thead><tr><th>NIT</th><th>EMPRESA</th><th>PROYECTO</th><th>CORREO</th><th>TELEFONO</th><th>ARCHIVO</th><th>ACCIONES</th></tr></thead>
+                <tbody id="companiesBody"></tbody>
+              </table>
+            </div>
+          </details>
         </section>
 
         <section class="panel tab-panel" id="historySection" data-tab="history">
@@ -216,6 +255,10 @@
             <label>Fecha emision<input id="quoteFilterDate" type="date" /></label>
           </div>
           <div class="table-wrap"><table class="items-table"><thead><tr><th>NUMERO</th><th>FECHA</th><th>NIT</th><th>EMPRESA</th><th>TOTAL</th></tr></thead><tbody id="quoteHistoryBody"></tbody></table></div>
+          <div class="grid-two">
+            <button id="btnDownloadSelectedDocx" type="button">Descargar Word de seleccionada</button>
+            <button id="btnDownloadSelectedPdf" type="button">Descargar PDF de seleccionada</button>
+          </div>
         </section>
 
         <section class="panel tab-panel" id="templateSection" data-tab="template">

@@ -1,9 +1,11 @@
 ﻿import express from "express";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { appConfig } from "./config.js";
+import { writeJsonFile } from "./shared/json-files.js";
 import { createQuote, getQuoteByNumber, listQuotes } from "./modules/quotes/services/quote-service.js";
-import { getCustomerByNit } from "./modules/quotes/services/customer-service.js";
+import { getCustomerByNit, listCustomers } from "./modules/quotes/services/customer-service.js";
 import { createProduct, deleteProduct, listProducts, productHistory, updateProduct } from "./modules/products/services/products-service.js";
 import { addProductColumn, listProductColumns, removeProductColumn } from "./modules/products/columns/product-columns-service.js";
 import { addServiceColumn, listServiceColumns, removeServiceColumn } from "./modules/services/columns/service-columns-service.js";
@@ -24,6 +26,55 @@ const frontendPath = path.resolve(__dirname, "..", "..", "frontend");
 const app = express();
 app.use(express.json({ limit: "2mb" }));
 app.use(express.static(frontendPath));
+
+function ensureJsonArrayFile(filePath) {
+  const dir = path.dirname(filePath);
+  if (!appConfig.fs.existsSync(dir)) appConfig.fs.mkdirSync(dir, { recursive: true });
+  if (!appConfig.fs.existsSync(filePath)) writeJsonFile(filePath, []);
+}
+
+function ensureJsonObjectFile(filePath, defaultData) {
+  const dir = path.dirname(filePath);
+  if (!appConfig.fs.existsSync(dir)) appConfig.fs.mkdirSync(dir, { recursive: true });
+  if (!appConfig.fs.existsSync(filePath)) writeJsonFile(filePath, defaultData);
+}
+
+function readJsonArraySafe(filePath) {
+  ensureJsonArrayFile(filePath);
+  try {
+    const parsed = JSON.parse(appConfig.fs.readFileSync(filePath, "utf8") || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function readJsonObjectSafe(filePath, defaultData) {
+  ensureJsonObjectFile(filePath, defaultData);
+  try {
+    const parsed = JSON.parse(appConfig.fs.readFileSync(filePath, "utf8") || "{}");
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : defaultData;
+  } catch {
+    return defaultData;
+  }
+}
+
+function getIvaSetting() {
+  const config = readJsonObjectSafe(appConfig.files.ivaSettings, { value: 19, updated_at: new Date().toISOString() });
+  const value = Number(config.value);
+  if (!Number.isFinite(value) || value < 0 || value > 100) {
+    return { value: 19, updated_at: config.updated_at || new Date().toISOString() };
+  }
+  return { value, updated_at: config.updated_at || null };
+}
+
+function sanitizeFileName(fileName) {
+  return String(fileName || "archivo")
+    .replace(/[\\/:*?"<>|]+/g, "_")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180) || "archivo";
+}
 
 app.get("/", (_req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
@@ -155,15 +206,242 @@ app.get("/api/product-types/history", (req, res) => {
   res.json(result);
 });
 
+app.get("/api/customers", (req, res) => {
+  const query = String(req.query.query || "");
+  const result = listCustomers({ query, cfg: appConfig });
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  const mappedCompanies = companies.map((c) => ({
+    nit: c.nit || "",
+    company_name: c.name || "",
+    contact: c.contact || "",
+    project: c.project || "",
+    location: c.address || "",
+    phone: c.phone || "",
+    email: c.email || "",
+    information: c.information || ""
+  }));
+  const mergedByNit = new Map();
+  [...mappedCompanies, ...(result.customers || [])].forEach((x) => {
+    const key = String(x.nit || "").trim();
+    if (key) mergedByNit.set(key, x);
+  });
+  const q = query.trim().toLowerCase();
+  const customers = [...mergedByNit.values()].filter((c) => {
+    if (!q) return true;
+    return String(c.nit || "").toLowerCase().includes(q) || String(c.company_name || "").toLowerCase().includes(q);
+  });
+  res.json({ ok: true, total: customers.length, customers: customers.slice(0, 100) });
+});
+
 app.get("/api/customers/:nit", (req, res) => {
   const { nit } = req.params;
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  const company = companies.find((x) => String(x.nit || "").trim() === String(nit || "").trim());
+  if (company) {
+    return res.json({
+      ok: true,
+      customer: {
+        nit: company.nit || "",
+        company_name: company.name || "",
+        contact: company.contact || "",
+        project: company.project || "",
+        location: company.address || "",
+        phone: company.phone || "",
+        email: company.email || "",
+        information: company.information || "",
+        company_id: company.id,
+        company_file_url: company.file?.path ? `/api/companies/${encodeURIComponent(company.id)}/file` : null
+      }
+    });
+  }
   const result = getCustomerByNit({ nit, cfg: appConfig });
   const status = result.ok ? 200 : 404;
   res.status(status).json(result);
 });
 
+app.get("/api/settings/iva", (_req, res) => {
+  const setting = getIvaSetting();
+  res.json({ ok: true, iva: setting.value, updated_at: setting.updated_at });
+});
+
+app.put("/api/settings/iva", (req, res) => {
+  const value = Number(req.body?.value);
+  if (!Number.isFinite(value) || value < 0 || value > 100) {
+    return res.status(400).json({ ok: false, error: "IVA invalido. Debe estar entre 0 y 100" });
+  }
+  const next = { value, updated_at: new Date().toISOString() };
+  ensureJsonObjectFile(appConfig.files.ivaSettings, next);
+  writeJsonFile(appConfig.files.ivaSettings, next);
+  return res.json({ ok: true, iva: value, updated_at: next.updated_at });
+});
+
+app.get("/api/companies", (_req, res) => {
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  res.json({ ok: true, total: companies.length, companies });
+});
+
+app.post("/api/companies", (req, res) => {
+  const nit = String(req.body?.nit || "").trim();
+  const name = String(req.body?.name || "").trim();
+  const email = String(req.body?.email || "").trim();
+  const phone = String(req.body?.phone || "").trim();
+  const address = String(req.body?.address || "").trim();
+  const contact = String(req.body?.contact || "").trim();
+  const project = String(req.body?.project || "").trim();
+  const information = String(req.body?.information || "").trim();
+
+  if (!nit) return res.status(400).json({ ok: false, error: "NIT es obligatorio" });
+  if (!name) return res.status(400).json({ ok: false, error: "Empresa es obligatoria" });
+  if (!email) return res.status(400).json({ ok: false, error: "Correo es obligatorio" });
+  if (!phone) return res.status(400).json({ ok: false, error: "Telefono es obligatorio" });
+
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  if (companies.some((x) => String(x.nit || "").trim() === nit)) {
+    return res.status(400).json({ ok: false, error: "Ya existe una empresa con ese NIT" });
+  }
+  const id = crypto.randomUUID();
+  const company = {
+    id,
+    name,
+    email,
+    phone,
+    nit,
+    address,
+    contact,
+    project,
+    information,
+    file: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  companies.push(company);
+  writeJsonFile(appConfig.files.companies, companies);
+
+  const customers = readJsonArraySafe(appConfig.files.customers);
+  const customerRecord = {
+    nit,
+    company_name: name,
+    contact,
+    project,
+    location: address,
+    phone,
+    email,
+    information,
+    updated_at: new Date().toISOString(),
+    created_at: new Date().toISOString()
+  };
+  const idx = customers.findIndex((c) => String(c.nit || "").trim() === nit);
+  if (idx >= 0) customers[idx] = { ...customers[idx], ...customerRecord };
+  else customers.push(customerRecord);
+  writeJsonFile(appConfig.files.customers, customers);
+
+  return res.status(201).json({ ok: true, company });
+});
+
+app.put("/api/companies/:id", (req, res) => {
+  const id = String(req.params.id || "").trim();
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  const idx = companies.findIndex((x) => x.id === id);
+  if (idx < 0) return res.status(404).json({ ok: false, error: "Empresa no encontrada" });
+
+  const nit = String(req.body?.nit || "").trim();
+  const name = String(req.body?.name || "").trim();
+  const email = String(req.body?.email || "").trim();
+  const phone = String(req.body?.phone || "").trim();
+  const address = String(req.body?.address || "").trim();
+  const contact = String(req.body?.contact || "").trim();
+  const project = String(req.body?.project || "").trim();
+  const information = String(req.body?.information || "").trim();
+
+  if (!nit) return res.status(400).json({ ok: false, error: "NIT es obligatorio" });
+  if (!name) return res.status(400).json({ ok: false, error: "Empresa es obligatoria" });
+  if (!email) return res.status(400).json({ ok: false, error: "Correo es obligatorio" });
+  if (!phone) return res.status(400).json({ ok: false, error: "Telefono es obligatorio" });
+  if (companies.some((x, i) => i !== idx && String(x.nit || "").trim() === nit)) {
+    return res.status(400).json({ ok: false, error: "Ya existe otra empresa con ese NIT" });
+  }
+
+  companies[idx] = {
+    ...companies[idx],
+    nit,
+    name,
+    email,
+    phone,
+    address,
+    contact,
+    project,
+    information,
+    updated_at: new Date().toISOString()
+  };
+  writeJsonFile(appConfig.files.companies, companies);
+
+  const customers = readJsonArraySafe(appConfig.files.customers);
+  const customerRecord = {
+    nit,
+    company_name: name,
+    contact,
+    project,
+    location: address,
+    phone,
+    email,
+    information,
+    updated_at: new Date().toISOString()
+  };
+  const cidx = customers.findIndex((c) => String(c.nit || "").trim() === nit);
+  if (cidx >= 0) customers[cidx] = { ...customers[cidx], ...customerRecord };
+  else customers.push({ ...customerRecord, created_at: new Date().toISOString() });
+  writeJsonFile(appConfig.files.customers, customers);
+
+  return res.json({ ok: true, company: companies[idx] });
+});
+
+app.put("/api/companies/:id/file", express.raw({ type: "*/*", limit: "30mb" }), (req, res) => {
+  const id = String(req.params.id || "").trim();
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  const index = companies.findIndex((x) => x.id === id);
+  if (index < 0) return res.status(404).json({ ok: false, error: "Empresa no encontrada" });
+
+  const bytes = req.body;
+  if (!bytes || !Buffer.isBuffer(bytes) || bytes.length === 0) {
+    return res.status(400).json({ ok: false, error: "Archivo invalido" });
+  }
+
+  const sourceName = sanitizeFileName(req.headers["x-filename"] || "archivo.bin");
+  const companyDir = path.join(appConfig.files.companyFilesRoot, id);
+  if (!appConfig.fs.existsSync(companyDir)) appConfig.fs.mkdirSync(companyDir, { recursive: true });
+
+  const finalName = `${Date.now()}_${sourceName}`;
+  const fullPath = path.join(companyDir, finalName);
+  appConfig.fs.writeFileSync(fullPath, bytes);
+
+  companies[index].file = {
+    name: sourceName,
+    stored_name: finalName,
+    path: fullPath,
+    size: bytes.length,
+    uploaded_at: new Date().toISOString()
+  };
+  companies[index].updated_at = new Date().toISOString();
+  writeJsonFile(appConfig.files.companies, companies);
+
+  return res.json({ ok: true, company: companies[index] });
+});
+
+app.get("/api/companies/:id/file", (req, res) => {
+  const id = String(req.params.id || "").trim();
+  const companies = readJsonArraySafe(appConfig.files.companies);
+  const company = companies.find((x) => x.id === id);
+  if (!company || !company.file?.path) return res.status(404).json({ ok: false, error: "Archivo no encontrado" });
+  if (!appConfig.fs.existsSync(company.file.path)) return res.status(404).json({ ok: false, error: "Archivo no disponible" });
+  return res.download(company.file.path, company.file.name || "archivo");
+});
+
 app.post("/api/quotes", (req, res) => {
-  const result = createQuote({ payload: req.body || {}, cfg: appConfig });
+  const payload = req.body || {};
+  if (payload.taxRate === undefined || payload.taxRate === null || payload.taxRate === "") {
+    payload.taxRate = getIvaSetting().value;
+  }
+  const result = createQuote({ payload, cfg: appConfig });
   const status = result.ok ? 201 : 400;
   res.status(status).json(result);
 });
@@ -275,7 +553,6 @@ app.put("/api/template/docx", express.raw({ type: "*/*", limit: "20mb" }), (req,
     if (!fileBytes || !Buffer.isBuffer(fileBytes) || fileBytes.length < 4) {
       return res.status(400).json({ ok: false, error: "Archivo inválido" });
     }
-    // DOCX debe ser ZIP: cabecera PK
     if (!(fileBytes[0] === 0x50 && fileBytes[1] === 0x4b)) {
       return res.status(400).json({ ok: false, error: "El archivo no parece un DOCX válido" });
     }
@@ -331,3 +608,4 @@ app.use((err, _req, res, _next) => {
 app.listen(appConfig.port, () => {
   console.log(`Backend running on http://localhost:${appConfig.port}`);
 });
+

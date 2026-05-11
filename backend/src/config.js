@@ -22,6 +22,9 @@ export const appConfig = {
     serviceColumns: path.join(root, "data", "system", "service_columns.json"),
     productTypesCurrent: path.join(root, "data", "product-types", "current_product_types.json"),
     productTypeChangeLogs: path.join(root, "data", "system", "product_type_change_logs.json"),
+    ivaSettings: path.join(root, "data", "system", "iva_settings.json"),
+    companies: path.join(root, "data", "companies", "companies.json"),
+    companyFilesRoot: path.join(root, "data", "companies", "files"),
     businessRules: path.join(root, "config", "business-rules.json"),
     quoteTemplateDocx: path.join(root, "membrete_smartcouplers_footer_codigo_auto_paginas.docx")
   },

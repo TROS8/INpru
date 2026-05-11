@@ -10,7 +10,11 @@ const state = {
   productTypes: [],
   quoteProductTypes: [],
   lastQuoteNumber: "",
-  wizardStep: 1
+  wizardStep: 1,
+  customers: [],
+  companies: [],
+  iva: 19,
+  editingCompanyId: null
 };
 
 const el = {
@@ -80,12 +84,15 @@ const el = {
   customerLocation: document.getElementById("customerLocation"),
   customerEmail: document.getElementById("customerEmail"),
   customerPhone: document.getElementById("customerPhone"),
-  taxRate: document.getElementById("taxRate"),
+  customerNitSuggestions: document.getElementById("customerNitSuggestions"),
+  customerCompanyFileInfo: document.getElementById("customerCompanyFileInfo"),
   quoteResult: document.getElementById("quoteResult"),
   quotePreview: document.getElementById("quotePreview"),
   quoteFilterQuery: document.getElementById("quoteFilterQuery"),
   quoteFilterDate: document.getElementById("quoteFilterDate"),
   quoteHistoryBody: document.getElementById("quoteHistoryBody"),
+  btnDownloadSelectedDocx: document.getElementById("btnDownloadSelectedDocx"),
+  btnDownloadSelectedPdf: document.getElementById("btnDownloadSelectedPdf"),
   historyClearResult: document.getElementById("historyClearResult"),
   docResult: document.getElementById("docResult"),
   templateFileInput: document.getElementById("templateFileInput"),
@@ -94,7 +101,19 @@ const el = {
   wizardStepLabel: document.getElementById("wizardStepLabel"),
   wizardBarFill: document.getElementById("wizardBarFill"),
   wizardPrev: document.getElementById("btnWizardPrev"),
-  wizardNext: document.getElementById("btnWizardNext")
+  wizardNext: document.getElementById("btnWizardNext"),
+  adminIvaValue: document.getElementById("adminIvaValue"),
+  adminIvaResult: document.getElementById("adminIvaResult"),
+  companyName: document.getElementById("companyName"),
+  companyEmail: document.getElementById("companyEmail"),
+  companyPhone: document.getElementById("companyPhone"),
+  companyNit: document.getElementById("companyNit"),
+  companyProject: document.getElementById("companyProject"),
+  companyContact: document.getElementById("companyContact"),
+  companyAddress: document.getElementById("companyAddress"),
+  companyFileInput: document.getElementById("companyFileInput"),
+  companyResult: document.getElementById("companyResult"),
+  companiesBody: document.getElementById("companiesBody")
 };
 
 document.getElementById("btnAddColumn").addEventListener("click", addColumn);
@@ -103,7 +122,6 @@ document.getElementById("btnAdminCreateProduct").addEventListener("click", creat
 document.getElementById("btnAdminUpdateProduct").addEventListener("click", updateProductAdmin);
 document.getElementById("btnAdminDeleteProduct").addEventListener("click", deleteProductAdmin);
 document.getElementById("btnAddItem").addEventListener("click", addItem);
-document.getElementById("btnCreateQuote").addEventListener("click", createQuote);
 document.getElementById("btnAddServiceColumn").addEventListener("click", addServiceColumn);
 document.getElementById("btnDeleteServiceColumn").addEventListener("click", deleteServiceColumn);
 document.getElementById("btnCreateService").addEventListener("click", createService);
@@ -114,14 +132,29 @@ document.getElementById("btnCreateProductType").addEventListener("click", create
 document.getElementById("btnUpdateProductType").addEventListener("click", updateProductType);
 document.getElementById("btnDeleteProductType").addEventListener("click", deleteProductType);
 document.getElementById("btnAddQuoteProductType").addEventListener("click", addQuoteProductType);
-document.getElementById("btnGenerateDocs").addEventListener("click", generateDocuments);
 document.getElementById("btnDownloadTemplate").addEventListener("click", downloadTemplate);
 document.getElementById("btnUploadTemplate").addEventListener("click", uploadTemplate);
 document.getElementById("btnClearAllHistory").addEventListener("click", clearAllHistory);
+document.getElementById("btnSaveIva").addEventListener("click", saveIvaSettings);
+document.getElementById("btnCreateCompany").addEventListener("click", createCompany);
+document.getElementById("btnCancelCompanyEdit").addEventListener("click", resetCompanyForm);
+document.getElementById("btnNewQuoteReset").addEventListener("click", startNewQuoteReset);
+document.getElementById("btnBackStep1Keep").addEventListener("click", backToStep1KeepData);
 document.getElementById("btnBackToTop").addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 el.customerNit.addEventListener("blur", lookupCustomerByNit);
+el.customerNit.addEventListener("input", refreshCustomerSuggestions);
+el.customerNit.addEventListener("input", unlockCustomerIdentityFields);
+[
+  el.customerNit,
+  el.customerCompanyName,
+  el.customerContact,
+  el.customerProject,
+  el.customerLocation,
+  el.customerPhone,
+  el.customerEmail
+].forEach((node) => node && node.addEventListener("input", refreshLivePreview));
 el.productSelect.addEventListener("change", syncSelectedProductPrice);
 el.quoteServiceSelect.addEventListener("change", syncSelectedQuoteServicePrice);
 el.historyFilterCode.addEventListener("input", refreshHistory);
@@ -132,6 +165,8 @@ el.serviceHistoryFilterCode.addEventListener("input", refreshServiceHistory);
 el.serviceHistoryFilterAction.addEventListener("change", refreshServiceHistory);
 el.wizardPrev.addEventListener("click", () => moveWizard(-1));
 el.wizardNext.addEventListener("click", () => moveWizard(1));
+el.btnDownloadSelectedDocx.addEventListener("click", () => downloadSelectedQuoteFile("docx"));
+el.btnDownloadSelectedPdf.addEventListener("click", () => downloadSelectedQuoteFile("pdf"));
 
 boot();
 
@@ -147,11 +182,15 @@ async function boot() {
   await refreshServices();
   await refreshServiceHistory();
   await refreshProductTypes();
+  await refreshIvaSettings();
+  await refreshCompanies();
+  await refreshCustomerSuggestions();
   renderQuoteItemsHead();
   renderQuoteServicesHead();
   renderQuoteServices();
   renderQuoteProductTypeSelect();
   renderQuoteProductTypes();
+  refreshLivePreview();
   await refreshQuoteHistory();
   initWizard();
 }
@@ -171,6 +210,10 @@ function renderWizard() {
 
 function moveWizard(delta) {
   clearWizardErrors();
+  if (delta > 0 && state.wizardStep === 5) {
+    createQuote();
+    return;
+  }
   if (delta > 0 && !validateWizardStep(state.wizardStep)) return;
   const next = state.wizardStep + delta;
   if (next < 1 || next > 5) return;
@@ -184,23 +227,31 @@ function validateWizardStep(step) {
   const nit = el.customerNit.value.trim();
   const company = el.customerCompanyName.value.trim();
   const contact = el.customerContact.value.trim();
-  const project = el.customerProject.value.trim();
-  const location = el.customerLocation.value.trim();
   const phone = el.customerPhone.value.trim();
   const email = el.customerEmail.value.trim();
-  const taxRate = Number(el.taxRate.value);
 
-  ok = setFieldError("errCustomerNit", /^\d{8,}$/.test(nit) ? "" : "NIT invalido (minimo 8 digitos)") && ok;
+  ok = setFieldError("errCustomerNit", nit && /^\d{4,}$/.test(nit) ? "" : "NIT obligatorio y valido") && ok;
   ok = setFieldError("errCustomerCompanyName", company ? "" : "Empresa obligatoria") && ok;
   ok = setFieldError("errCustomerContact", contact ? "" : "Contacto obligatorio") && ok;
-  ok = setFieldError("errCustomerProject", project ? "" : "Proyecto obligatorio") && ok;
-  ok = setFieldError("errCustomerLocation", location ? "" : "Ubicacion obligatoria") && ok;
-  ok = setFieldError("errCustomerPhone", /^[+]?\d{7,15}$/.test(phone) ? "" : "Telefono invalido") && ok;
-  ok = setFieldError("errCustomerEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "" : "Correo invalido") && ok;
-  ok = setFieldError("errTaxRate", Number.isFinite(taxRate) && taxRate >= 0 && taxRate <= 100 ? "" : "IVA debe estar entre 0 y 100") && ok;
+  ok = setFieldError("errCustomerProject", "") && ok;
+  ok = setFieldError("errCustomerLocation", "") && ok;
+  ok = setFieldError("errCustomerPhone", /^[+]?\d{7,15}$/.test(phone) ? "" : "Telefono obligatorio y valido") && ok;
+  ok = setFieldError("errCustomerEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "" : "Correo obligatorio y valido") && ok;
 
-  if (!ok) showWizardError("Corrige los campos obligatorios antes de continuar.");
+  if (!ok) showWizardError("Corrige los campos con formato invalido antes de continuar.");
   return ok;
+}
+
+function setCustomerIdentityLocked(locked) {
+  [el.customerCompanyName, el.customerPhone, el.customerEmail].forEach((node) => {
+    if (!node) return;
+    node.readOnly = locked;
+    node.classList.toggle("locked", locked);
+  });
+}
+
+function unlockCustomerIdentityFields() {
+  setCustomerIdentityLocked(false);
 }
 
 function setFieldError(id, message) {
@@ -218,7 +269,7 @@ function showWizardError(message) {
 function clearWizardErrors() {
   el.wizardError.hidden = true;
   el.wizardError.textContent = "";
-  ["errCustomerNit","errCustomerCompanyName","errCustomerContact","errCustomerProject","errCustomerLocation","errCustomerPhone","errCustomerEmail","errTaxRate"]
+  ["errCustomerNit","errCustomerCompanyName","errCustomerContact","errCustomerProject","errCustomerLocation","errCustomerPhone","errCustomerEmail"]
     .forEach((id) => setFieldError(id, ""));
 }
 
@@ -792,8 +843,10 @@ function renderItems() {
         if (Number.isFinite(next) && next > 0) state.items[idx].quantity = next;
       }
       renderItems();
+      refreshLivePreview();
     });
   });
+  refreshLivePreview();
 }
 
 function renderQuoteServicesHead() {
@@ -855,8 +908,10 @@ function renderQuoteServices() {
         if (Number.isFinite(next) && next > 0) state.quoteServices[idx].quantity = next;
       }
       renderQuoteServices();
+      refreshLivePreview();
     });
   });
+  refreshLivePreview();
 }
 
 function addQuoteProductType() {
@@ -897,8 +952,10 @@ function renderQuoteProductTypes() {
         if (next !== null && String(next).trim()) state.quoteProductTypes[idx].comment = String(next).trim();
       }
       renderQuoteProductTypes();
+      refreshLivePreview();
     });
   });
+  refreshLivePreview();
 }
 
 async function createQuote() {
@@ -923,8 +980,7 @@ async function createQuote() {
     },
     items: state.items.map((x) => ({ product_code: x.product_code, quantity: x.quantity, unit_price: x.unit_price })),
     services: state.quoteServices.map((s) => ({ service_code: s.service_code, quantity: s.quantity, unit_price: s.unit_price })),
-    product_types: state.quoteProductTypes.map((t) => ({ type_code: t.type_code })),
-    taxRate: Number(el.taxRate.value || 0)
+    product_types: state.quoteProductTypes.map((t) => ({ type_code: t.type_code }))
   };
 
   const btn = document.getElementById("btnCreateQuote");
@@ -951,11 +1007,34 @@ async function createQuote() {
       renderQuoteServices();
       renderQuoteProductTypes();
       await refreshQuoteHistory();
+      try {
+        await fetch(`${API}/api/quotes/${encodeURIComponent(state.lastQuoteNumber)}/export-pdf`, { method: "POST" }).then(handleJsonResponse);
+        await triggerDownload(state.lastQuoteNumber, "docx");
+        showStatus(el.docResult, "Word generado y descargado automaticamente.", "ok");
+      } catch (err) {
+        showStatus(el.docResult, `Cotizacion emitida, pero fallo la descarga automatica: ${err.message}`, "error");
+      }
     }
   } catch (error) {
     showStatus(el.quoteResult, error.message, "error");
   } finally {
     setLoading(btn, false);
+  }
+}
+
+async function downloadSelectedQuoteFile(kind) {
+  if (!state.lastQuoteNumber) {
+    showStatus(el.docResult, "Selecciona una cotizacion desde historial primero.", "error");
+    return;
+  }
+  try {
+    if (kind === "pdf") {
+      await fetch(`${API}/api/quotes/${encodeURIComponent(state.lastQuoteNumber)}/export-pdf`, { method: "POST" }).then(handleJsonResponse);
+    }
+    await triggerDownload(state.lastQuoteNumber, kind);
+    showStatus(el.docResult, `${kind.toUpperCase()} descargado para ${state.lastQuoteNumber}.`, "ok");
+  } catch (error) {
+    showStatus(el.docResult, error.message, "error");
   }
 }
 
@@ -1121,11 +1200,23 @@ async function triggerDownload(quoteNumber, kind) {
 
 async function lookupCustomerByNit() {
   const nit = el.customerNit.value.trim();
-  if (!nit) return;
+  if (!nit) {
+    setCustomerIdentityLocked(false);
+    el.customerCompanyFileInfo.textContent = "Archivo de empresa: no disponible.";
+    return;
+  }
   const response = await fetch(`${API}/api/customers/${encodeURIComponent(nit)}`);
-  if (!response.ok) return;
+  if (!response.ok) {
+    setCustomerIdentityLocked(false);
+    el.customerCompanyFileInfo.textContent = "Archivo de empresa: no disponible.";
+    return;
+  }
   const data = await handleJsonResponse(response);
-  if (!data.customer) return;
+  if (!data.customer) {
+    setCustomerIdentityLocked(false);
+    el.customerCompanyFileInfo.textContent = "Archivo de empresa: no disponible.";
+    return;
+  }
   const c = data.customer;
   el.customerCompanyName.value = c.company_name || "";
   el.customerContact.value = c.contact || "";
@@ -1133,6 +1224,261 @@ async function lookupCustomerByNit() {
   el.customerLocation.value = c.location || "";
   el.customerPhone.value = c.phone || "";
   el.customerEmail.value = c.email || "";
+  setCustomerIdentityLocked(true);
+  if (c.company_file_url) {
+    el.customerCompanyFileInfo.innerHTML = `Archivo de empresa: <a href="${API}${c.company_file_url}" target="_blank" rel="noopener">Ver archivo</a>`;
+  } else {
+    el.customerCompanyFileInfo.textContent = "Archivo de empresa: no disponible.";
+  }
+  refreshLivePreview();
+}
+
+function buildDraftQuoteForPreview() {
+  const customer = {
+    nit: el.customerNit.value.trim(),
+    company_name: el.customerCompanyName.value.trim(),
+    contact: el.customerContact.value.trim(),
+    project: el.customerProject.value.trim(),
+    location: el.customerLocation.value.trim(),
+    phone: el.customerPhone.value.trim(),
+    email: el.customerEmail.value.trim()
+  };
+
+  const items = state.items.map((x) => ({
+    product_code: x.product_code,
+    description: x.description,
+    diameter: x.diameter,
+    quantity: Number(x.quantity || 0),
+    unit_price: Number(x.unit_price || 0),
+    item_total: Number(x.quantity || 0) * Number(x.unit_price || 0)
+  }));
+
+  const services = state.quoteServices.map((x) => ({
+    service_code: x.service_code,
+    description: x.description,
+    unit: x.unit,
+    quantity: Number(x.quantity || 0),
+    unit_price: Number(x.unit_price || 0),
+    total: Number(x.quantity || 0) * Number(x.unit_price || 0)
+  }));
+
+  const product_types = state.quoteProductTypes.map((x) => ({ comment: x.comment || "" }));
+
+  const productsSubtotal = items.reduce((s, i) => s + i.item_total, 0);
+  const servicesSubtotal = services.reduce((s, i) => s + i.total, 0);
+  const taxRate = Number(state.iva || 19);
+  const productsTax = productsSubtotal * (taxRate / 100);
+  const servicesTax = servicesSubtotal * (taxRate / 100);
+
+  return {
+    quote_number: state.lastQuoteNumber || "BORRADOR",
+    emitted_at: new Date().toISOString(),
+    customer,
+    items,
+    services,
+    product_types,
+    totals: {
+      products_subtotal: productsSubtotal,
+      products_tax_amount: productsTax,
+      products_total: productsSubtotal + productsTax,
+      services_subtotal: servicesSubtotal,
+      services_tax_amount: servicesTax,
+      services_total: servicesSubtotal + servicesTax,
+      grand_total: productsSubtotal + productsTax + servicesSubtotal + servicesTax,
+      total: productsSubtotal + productsTax + servicesSubtotal + servicesTax
+    }
+  };
+}
+
+function refreshLivePreview() {
+  try {
+    renderQuotePreview(buildDraftQuoteForPreview());
+  } catch {
+    // no-op
+  }
+}
+
+async function refreshCustomerSuggestions() {
+  const query = encodeURIComponent(el.customerNit.value.trim());
+  try {
+    const data = await fetch(`${API}/api/customers?query=${query}`).then(handleJsonResponse);
+    state.customers = data.customers || [];
+    el.customerNitSuggestions.innerHTML = state.customers
+      .map((c) => `<option value="${escapeHtml(c.nit)}">${escapeHtml(c.nit)} - ${escapeHtml(c.company_name || "")}</option>`)
+      .join("");
+  } catch {
+    el.customerNitSuggestions.innerHTML = "";
+  }
+}
+
+async function refreshIvaSettings() {
+  try {
+    const data = await fetch(`${API}/api/settings/iva`).then(handleJsonResponse);
+    state.iva = Number(data.iva || 19);
+    el.adminIvaValue.value = String(state.iva);
+    showStatus(el.adminIvaResult, `IVA actual: ${state.iva}%`, "ok");
+  } catch (error) {
+    showStatus(el.adminIvaResult, error.message, "error");
+  }
+}
+
+async function saveIvaSettings() {
+  const value = Number(el.adminIvaValue.value);
+  if (!Number.isFinite(value) || value < 0 || value > 100) {
+    showStatus(el.adminIvaResult, "IVA invalido. Debe estar entre 0 y 100.", "error");
+    return;
+  }
+  try {
+    const response = await fetch(`${API}/api/settings/iva`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ value })
+    });
+    const data = await handleJsonResponse(response);
+    state.iva = Number(data.iva || 19);
+    showStatus(el.adminIvaResult, `IVA actualizado a ${state.iva}%`, "ok");
+  } catch (error) {
+    showStatus(el.adminIvaResult, error.message, "error");
+  }
+}
+
+async function refreshCompanies() {
+  try {
+    const data = await fetch(`${API}/api/companies`).then(handleJsonResponse);
+    state.companies = data.companies || [];
+    el.companiesBody.innerHTML = state.companies.length
+      ? state.companies
+          .map((c) => {
+            const fileCell = c.file?.path
+              ? `<a href="${API}/api/companies/${encodeURIComponent(c.id)}/file" target="_blank" rel="noopener">Descargar</a>`
+              : "Sin archivo";
+            return `<tr>
+              <td>${escapeHtml(c.nit || "-")}</td>
+              <td>${escapeHtml(c.name || "")}</td>
+              <td>${escapeHtml(c.project || "-")}</td>
+              <td>${escapeHtml(c.email || "")}</td>
+              <td>${escapeHtml(c.phone || "")}</td>
+              <td>${fileCell}</td>
+              <td><button type="button" data-company-edit="${escapeHtml(c.id)}">Editar</button></td>
+            </tr>`;
+          })
+          .join("")
+      : `<tr><td colspan="7">Sin empresas registradas.</td></tr>`;
+    el.companiesBody.querySelectorAll("button[data-company-edit]").forEach((btn) => {
+      btn.addEventListener("click", () => startEditCompany(btn.dataset.companyEdit));
+    });
+  } catch (error) {
+    showStatus(el.companyResult, error.message, "error");
+  }
+}
+
+async function createCompany() {
+  const payload = {
+    nit: el.companyNit.value.trim(),
+    name: el.companyName.value.trim(),
+    email: el.companyEmail.value.trim(),
+    phone: el.companyPhone.value.trim(),
+    project: el.companyProject.value.trim(),
+    contact: el.companyContact.value.trim(),
+    address: el.companyAddress.value.trim()
+  };
+
+  if (!payload.nit || !payload.name || !payload.email || !payload.phone) {
+    showStatus(el.companyResult, "NIT, empresa, correo y telefono son obligatorios.", "error");
+    return;
+  }
+
+  try {
+    const isEdit = Boolean(state.editingCompanyId);
+    const endpoint = isEdit ? `${API}/api/companies/${encodeURIComponent(state.editingCompanyId)}` : `${API}/api/companies`;
+    const createResp = await fetch(endpoint, {
+      method: isEdit ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const createData = await handleJsonResponse(createResp);
+    const company = createData.company;
+
+    const file = el.companyFileInput.files?.[0];
+    if (file) {
+      const bytes = await file.arrayBuffer();
+      const uploadResp = await fetch(`${API}/api/companies/${encodeURIComponent(company.id)}/file`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "x-filename": file.name
+        },
+        body: bytes
+      });
+      await handleJsonResponse(uploadResp);
+    }
+
+    showStatus(el.companyResult, isEdit ? `Empresa ${company.name} actualizada.` : `Empresa ${company.name} registrada correctamente.`, "ok");
+    resetCompanyForm();
+    await refreshCompanies();
+    await refreshCustomerSuggestions();
+  } catch (error) {
+    showStatus(el.companyResult, error.message, "error");
+  }
+}
+
+function startEditCompany(companyId) {
+  const company = state.companies.find((x) => x.id === companyId);
+  if (!company) return;
+  state.editingCompanyId = companyId;
+  el.companyNit.value = company.nit || "";
+  el.companyName.value = company.name || "";
+  el.companyEmail.value = company.email || "";
+  el.companyPhone.value = company.phone || "";
+  el.companyProject.value = company.project || "";
+  el.companyContact.value = company.contact || "";
+  el.companyAddress.value = company.address || "";
+  document.getElementById("btnCreateCompany").textContent = "Guardar cambios";
+  showStatus(el.companyResult, `Editando empresa: ${company.name}`, "ok");
+}
+
+function resetCompanyForm() {
+  state.editingCompanyId = null;
+  el.companyName.value = "";
+  el.companyEmail.value = "";
+  el.companyPhone.value = "";
+  el.companyNit.value = "";
+  el.companyProject.value = "";
+  el.companyContact.value = "";
+  el.companyAddress.value = "";
+  el.companyFileInput.value = "";
+  document.getElementById("btnCreateCompany").textContent = "Registrar empresa";
+}
+
+function backToStep1KeepData() {
+  state.wizardStep = 1;
+  renderWizard();
+}
+
+function startNewQuoteReset() {
+  if (!confirm("Se limpiaran los datos de la cotizacion actual para iniciar una nueva. Continuar?")) return;
+  state.items = [];
+  state.quoteServices = [];
+  state.quoteProductTypes = [];
+  state.lastQuoteNumber = "";
+
+  el.customerNit.value = "";
+  el.customerCompanyName.value = "";
+  el.customerContact.value = "";
+  el.customerProject.value = "";
+  el.customerLocation.value = "";
+  el.customerPhone.value = "";
+  el.customerEmail.value = "";
+  el.customerCompanyFileInfo.textContent = "Archivo de empresa: no disponible.";
+  unlockCustomerIdentityFields();
+
+  renderItems();
+  renderQuoteServices();
+  renderQuoteProductTypes();
+  refreshLivePreview();
+  showStatus(el.quoteResult, "Nueva cotizacion iniciada.", "ok");
+  state.wizardStep = 1;
+  renderWizard();
 }
 
 function formatMoney(value) {

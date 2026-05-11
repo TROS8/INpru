@@ -9,10 +9,10 @@
   if (!String(customer.nit || "").trim()) errors.push("customer.nit es obligatorio");
   if (!String(customer.company_name || "").trim()) errors.push("customer.company_name es obligatorio");
   if (!String(customer.contact || "").trim()) errors.push("customer.contact es obligatorio");
-  if (!String(customer.project || "").trim()) errors.push("customer.project es obligatorio");
-  if (!String(customer.location || "").trim()) errors.push("customer.location es obligatorio");
   if (!String(customer.phone || "").trim()) errors.push("customer.phone es obligatorio");
   if (!String(customer.email || "").trim()) errors.push("customer.email es obligatorio");
+  if (String(customer.nit || "").trim() && !/^\d{4,}$/.test(String(customer.nit || "").trim())) errors.push("customer.nit invalido");
+  if (String(customer.email || "").trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(customer.email || "").trim())) errors.push("customer.email invalido");
 
   if (items.length === 0) {
     errors.push("Debe incluir al menos un item");

@@ -16,9 +16,32 @@ export function getCustomerByNit({ nit, cfg }) {
   return { ok: true, customer };
 }
 
+export function listCustomers({ query = "", cfg }) {
+  const customers = readJsonArray(cfg.files.customers);
+  const q = String(query || "").trim().toLowerCase();
+  const filtered = q
+    ? customers.filter((c) => {
+        const nit = String(c.nit || "").toLowerCase();
+        const company = String(c.company_name || "").toLowerCase();
+        const phone = String(c.phone || "").toLowerCase();
+        return nit.includes(q) || company.includes(q) || phone.includes(q);
+      })
+    : customers;
+
+  return {
+    ok: true,
+    total: filtered.length,
+    customers: filtered.slice(0, 100)
+  };
+}
+
 export function upsertCustomerFromQuote({ customerInput, cfg }) {
   const customers = readJsonArray(cfg.files.customers);
   const nit = String(customerInput.nit || "").trim();
+  const company = String(customerInput.company_name || "").trim();
+  if (!nit || !company) {
+    return;
+  }
 
   const nextCustomer = {
     nit,

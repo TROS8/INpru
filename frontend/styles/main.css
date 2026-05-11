@@ -223,6 +223,11 @@ input:focus, select:focus {
   box-shadow: 0 0 0 4px rgba(15, 122, 99, 0.14);
 }
 
+input.locked {
+  background: #eef2f0;
+  border-color: #c7d0cb;
+}
+
 button {
   cursor: pointer;
   font-weight: 800;

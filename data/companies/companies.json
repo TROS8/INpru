@@ -1,0 +1,54 @@
+[
+  {
+    "id": "f613fe93-e97c-49b1-ab0b-7fcc6450cef2",
+    "name": "s",
+    "email": "daaf@df.co",
+    "phone": "123545612",
+    "nit": "",
+    "address": "",
+    "contact": "",
+    "file": {
+      "name": "QUOTE-0030.docx",
+      "stored_name": "1778530277563_QUOTE-0030.docx",
+      "path": "C:\\Proyectos\\00prueba1\\data\\companies\\files\\f613fe93-e97c-49b1-ab0b-7fcc6450cef2\\1778530277563_QUOTE-0030.docx",
+      "size": 1563893,
+      "uploaded_at": "2026-05-11T20:11:17.564Z"
+    },
+    "created_at": "2026-05-11T20:11:17.549Z",
+    "updated_at": "2026-05-11T20:11:17.564Z"
+  },
+  {
+    "id": "1fe2ed76-d064-4fe1-a17e-7f322f08ec30",
+    "name": "COLSURBE",
+    "email": "CRTSO@GMAIL.COM",
+    "phone": "21215451234",
+    "nit": "1120541872",
+    "address": "",
+    "contact": "alvaro",
+    "project": "NUEVA VIVIENDA",
+    "information": "",
+    "file": null,
+    "created_at": "2026-05-11T20:41:07.021Z",
+    "updated_at": "2026-05-11T20:41:07.021Z"
+  },
+  {
+    "id": "7eb3af34-d343-4cfa-8f0f-92b4abed9667",
+    "name": "desauy",
+    "email": "ygasy@ys.com",
+    "phone": "254154564645",
+    "nit": "415244545",
+    "address": "BOGOTA",
+    "contact": "carla",
+    "project": "cadiz",
+    "information": "",
+    "file": {
+      "name": "QUOTE-0032.pdf",
+      "stored_name": "1778533811554_QUOTE-0032.pdf",
+      "path": "C:\\Proyectos\\00prueba1\\data\\companies\\files\\7eb3af34-d343-4cfa-8f0f-92b4abed9667\\1778533811554_QUOTE-0032.pdf",
+      "size": 636407,
+      "uploaded_at": "2026-05-11T21:10:11.557Z"
+    },
+    "created_at": "2026-05-11T21:10:11.543Z",
+    "updated_at": "2026-05-11T21:10:11.557Z"
+  }
+]
